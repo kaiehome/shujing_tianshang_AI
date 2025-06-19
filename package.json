@@ -1,0 +1,42 @@
+{
+  "name": "ai_shengcheng",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@alicloud/dysmsapi20170525": "^4.1.1",
+    "@alicloud/tea-typescript": "^1.8.0",
+    "@heroicons/react": "^2.2.0",
+    "@supabase/supabase-js": "^2.49.8",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/ws": "^8.18.1",
+    "alipay-sdk": "^4.14.0",
+    "jsonwebtoken": "^9.0.2",
+    "next": "^15.3.2",
+    "next-intl": "^4.1.0",
+    "node-fetch": "^3.3.2",
+    "openai": "^4.103.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hot-toast": "^2.5.2",
+    "tenpay": "^2.1.18",
+    "ws": "^8.18.2"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20.17.50",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.8",
+    "postcss": "^8",
+    "sharp": "^0.34.2",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
