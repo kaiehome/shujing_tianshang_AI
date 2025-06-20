@@ -8,7 +8,7 @@ interface StyleCardGridProps {
     description: string;
     prompt_zh: string;
   }>;
-  selectedIndex: number;
+  selectedIndex: number | null;
   onSelect: (prompt: string, idx: number) => void;
 }
 

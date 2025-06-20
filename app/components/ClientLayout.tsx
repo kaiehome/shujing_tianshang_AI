@@ -17,7 +17,7 @@ export default function ClientLayout({
   return (
     <AuthProvider>
       <Navbar />
-      <main className="min-h-screen bg-zinc-900 pt-16">
+      <main className="min-h-screen bg-zinc-900 pt-12">
         {children}
       </main>
       {!isLoginPage && <Footer />}

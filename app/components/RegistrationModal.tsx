@@ -27,9 +27,9 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
         return {
           emoji: '🎉',
           text: '今日访客试用已达上限',
-          subtitle: '注册立享30点免费点数！',
+          subtitle: '注册立享10点免费点数！',
           benefits: [
-            '立即获得30点数，足够生成多张图片',
+            '立即获得10点数，足够生成多张图片',
             '解锁高清无水印下载功能',
             '自动保存生成历史和收藏',
             '享受全部18种专业风格模板',
@@ -42,7 +42,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
           text: '您已成为活跃用户！',
           subtitle: '注册即可获得专属福利！',
           benefits: [
-            '🎁 新用户专享30点数奖励',
+            '🎁 新用户专享10点数奖励',
             '🔓 解锁所有高级风格模板',
             '💾 永久保存您的创作历史',
             '📱 高清无水印图片下载',
@@ -107,7 +107,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
           text: '注册解锁完整功能',
           subtitle: '开启你的AI创作之旅！',
           benefits: [
-            '获得30点数免费体验',
+            '获得10点数免费体验',
             '解锁所有高级功能',
             '享受无限制创作体验',
             '专属客服支持',
@@ -191,8 +191,8 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
             <div className="text-center">
               <div className="text-2xl mb-2">🎁</div>
               <div className="text-orange-400 font-bold mb-1">新用户专享</div>
-              <div className="text-2xl font-bold text-white mb-1">30点数</div>
-              <div className="text-gray-300 text-sm">足够生成30+张精美图片</div>
+              <div className="text-2xl font-bold text-white mb-1">10点数</div>
+              <div className="text-gray-300 text-sm">足够生成10+张精美图片</div>
             </div>
           </div>
 
@@ -202,7 +202,7 @@ const RegistrationModal: React.FC<RegistrationModalProps> = ({
               onClick={handleRegister}
               className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-red-500 hover:to-orange-500 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
-              现在注册，领取30点数 🚀
+              现在注册，领取10点数 🚀
             </button>
             
             {trigger !== 'limit_reached' && (

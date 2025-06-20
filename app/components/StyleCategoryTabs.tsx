@@ -32,14 +32,14 @@ export default function StyleCategoryTabs({
           <button
             key={cat}
             onClick={() => onSelectCategory(cat)}
-            className={`group relative p-6 rounded-2xl border-2 transition-all duration-300 transform hover:scale-102 ${
+            className={`group relative px-6 py-3 rounded-2xl border-2 transition-all duration-300 transform hover:scale-102 ${
               selectedCategory === cat 
                 ? 'bg-gradient-to-br from-orange-500 to-red-500 border-orange-400 text-white shadow-xl shadow-orange-500/25 scale-102' 
                 : 'bg-zinc-700/50 border-zinc-600 text-gray-200 hover:border-orange-400 hover:bg-zinc-600/70 hover:text-white'
             } ${isLastOdd(cat, idx) ? 'lg:col-span-3 mx-auto w-full' : isShuJin(cat) ? 'col-span-2 lg:col-span-2 justify-self-center w-full' : ''}`}
             style={isLastOdd(cat, idx) ? { minWidth: '420px', maxWidth: '700px' } : isShuJin(cat) ? { minWidth: '420px', maxWidth: '600px' } : {}}
           >
-            <div className="flex flex-col items-center text-center space-y-3">
+            <div className="flex flex-col items-center text-center space-y-2">
               <div className={`text-3xl transition-transform duration-300 ${
                 selectedCategory === cat ? 'scale-110' : 'group-hover:scale-110'
               }`}>
@@ -67,26 +67,6 @@ export default function StyleCategoryTabs({
             )}
           </button>
         ))}
-      </div>
-      
-      {/* 底部描述 */}
-      <div className="mt-6 p-4 bg-zinc-800/30 rounded-xl border border-zinc-700/30">
-        <div className="flex items-start gap-3">
-          <div className="text-2xl">
-            {categoryIcons[selectedCategory] || '🎯'}
-          </div>
-          <div>
-            <h4 className="font-semibold text-white mb-1">
-              您选择了：{selectedCategory}
-            </h4>
-            <p className="text-sm text-gray-300 leading-relaxed">
-              {getCategoryDescription(selectedCategory)}
-            </p>
-            <div className="mt-2 text-xs text-blue-400">
-              共有 {stylePresets.find(c => c.category === selectedCategory)?.styles.length || 0} 种专业风格可选
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   )

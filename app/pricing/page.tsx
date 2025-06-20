@@ -299,7 +299,7 @@ export default function PricingPage() {
                             <div className="bg-green-900/20 border border-green-500/30 rounded-xl p-6">
                                 <div className="text-4xl mb-3">🎁</div>
                                 <h4 className="text-lg font-bold text-green-300 mb-2">注册礼包</h4>
-                                <p className="text-green-200 text-sm">新用户赠送 30 点免费生成点数<br/>（限时3天内使用）</p>
+                                <p className="text-green-200 text-sm">新用户赠送 10 点免费生成点数<br/>（限时3天内使用）</p>
                             </div>
                             <div className="bg-blue-900/20 border border-blue-500/30 rounded-xl p-6">
                                 <div className="text-4xl mb-3">🎯</div>

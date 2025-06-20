@@ -137,7 +137,7 @@ export default function FeaturesPage() {
                 <div className="text-blue-300 text-sm">专业风格模板</div>
               </div>
               <div className="bg-green-900/20 border border-green-500/30 rounded-xl p-4">
-                <div className="text-3xl font-bold text-green-400 mb-2">30</div>
+                <div className="text-3xl font-bold text-green-400 mb-2">10</div>
                 <div className="text-green-300 text-sm">免费体验点数</div>
               </div>
               <div className="bg-purple-900/20 border border-purple-500/30 rounded-xl p-4">

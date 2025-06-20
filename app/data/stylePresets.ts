@@ -1,6 +1,8 @@
 export const stylePresets = [
   {
     category: "小红书|微博|抖音创作者",
+    icon: "📱",
+    description: "为社交媒体创作者量身定制，涵盖从日常生活美学到温暖治愈插画的多种风格，助您轻松吸引眼球。",
     styles: [
       {
         name: "极简ins风",
@@ -21,6 +23,8 @@ export const stylePresets = [
   },
   {
     category: "情绪疗愈|身心灵用户",
+    icon: "🧘",
+    description: "专注于提供平和、宁静的视觉体验，通过空灵的冥想场景和抽象的水彩艺术，帮助用户探索内心世界。",
     styles: [
       {
         name: "冥想风插画",
@@ -41,6 +45,8 @@ export const stylePresets = [
   },
   {
     category: "自由职业设计师|小众创意工作者",
+    icon: "🎨",
+    description: "为专业设计师和创意人士打造，提供从品牌视觉到Logo草图的多种工具，激发您的无限创意灵感。",
     styles: [
       {
         name: "品牌插画风",
@@ -61,6 +67,8 @@ export const stylePresets = [
   },
   {
     category: "教培类|课程内容创作者",
+    icon: "🎓",
+    description: "专为教育场景设计，无论是仿黑板的板书风格还是可爱的卡通插图，都能让您的教学内容更生动有趣。",
     styles: [
       {
         name: "板书感插画",
@@ -81,6 +89,8 @@ export const stylePresets = [
   },
   {
     category: "手帐|插画爱好者",
+    icon: "🖌️",
+    description: "满足手帐爱好者和插画家的所有幻想，从可打印的贴纸到充满故事性的连环画，记录您的每一个奇思妙想。",
     styles: [
       {
         name: "手绘贴纸风",
@@ -101,6 +111,8 @@ export const stylePresets = [
   },
   {
     category: "微商|电商运营者",
+    icon: "🛒",
+    description: "助力电商运营，提供从高亮促销图到节日氛围模板的多种商业化风格，让您的产品在竞争中脱颖而出。",
     styles: [
       {
         name: "促销图风格",
@@ -121,6 +133,8 @@ export const stylePresets = [
   },
   {
     category: "非遗--蜀锦蜀绣制作者",
+    icon: "🧵",
+    description: "致敬中国非物质文化遗产，专注于蜀锦蜀绣艺术风格的创作，融合传统织锦与刺绣工艺，展现东方美学与匠心精神。",
     styles: [
       {
         name: "传统写实风",

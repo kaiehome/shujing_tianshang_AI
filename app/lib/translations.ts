@@ -44,13 +44,13 @@ export const translations = {
       heroSlogan: '✨ AI绘图，让创作更简单 ✨',
       heroDescription: '体验最先进的AI图像生成技术，只需输入文字描述，即可创造出令人惊叹的艺术作品。支持多种艺术风格，从写实摄影到抽象艺术，让您的创意无限延伸。',
       guestLimitNotice: '还剩 {count} 次免费生成机会（每次可生成4张图片），',
-      registerForPoints: '注册领取30点数',
+      registerForPoints: '注册领取10点数',
       generateResults: '生成结果',
       guestMode: '访客模式',
       newUserBenefits: '新用户专享福利',
       registerReward: {
         title: '注册即送',
-        points: '30点数',
+        points: '10点数',
         description: '足够生成多张精美图片'
       },
       fullFeatures: {
@@ -125,13 +125,13 @@ export const translations = {
       heroSlogan: '✨ AI Art Creation Made Simple ✨',
       heroDescription: 'Experience cutting-edge AI image generation technology. Simply enter text descriptions to create stunning artworks. Support various artistic styles, from realistic photography to abstract art, unleashing your creativity without limits.',
       guestLimitNotice: '{count} free generation opportunities remaining (4 images per generation), ',
-      registerForPoints: 'Register for 30 points',
+      registerForPoints: 'Register for 10 points',
       generateResults: 'Generation Results',
       guestMode: 'Guest Mode',
       newUserBenefits: 'Exclusive Benefits for New Users',
       registerReward: {
         title: 'Sign up bonus',
-        points: '30 Points',
+        points: '10 Points',
         description: 'Enough to generate multiple beautiful images'
       },
       fullFeatures: {

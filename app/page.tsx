@@ -52,10 +52,10 @@ export default function Home() {
   })
 
   const [selectedCategory, setSelectedCategory] = useState(stylePresets[0].category)
-  const [selectedStyleIndex, setSelectedStyleIndex] = useState<number>(-1)
-  const [selectedStyle, setSelectedStyle] = useState<string>('')
+  const [selectedStyle, setSelectedStyle] = useState<string | null>(null)
+  const [selectedStyleIndex, setSelectedStyleIndex] = useState<number | null>(null)
   const [prompt, setPrompt] = useState('')
-  const [promptPlaceholder, setPromptPlaceholder] = useState(stylePresets[0].styles[0].prompt_zh)
+  const [promptPlaceholder, setPromptPlaceholder] = useState('请在这里输入您的创意点子...')
   const [params, setParams] = useState<GenerationParams>({
     aspectRatio: '1:1',
     quality: 'standard',
@@ -108,14 +108,14 @@ export default function Home() {
   // 处理角色选择
   const handleCategorySelect = (category: string) => {
     setSelectedCategory(category)
-    setSelectedStyleIndex(-1) // 重置风格选择
-    setPrompt('') // 重置提示词
-    setPromptPlaceholder('') // 重置提示词占位符
-    
-    // 滚动到风格选择区域
-    setTimeout(() => {
-      scrollToSection('style-section')
-    }, 100)
+    setSelectedStyle(null)
+    setSelectedStyleIndex(null)
+    const preset = stylePresets.find(p => p.category === category)
+    if (preset && preset.styles.length > 0) {
+      setPromptPlaceholder(preset.styles[0].prompt_zh)
+    } else {
+      setPromptPlaceholder("请在这里输入您的创意点子...")
+    }
   }
 
   // 处理风格选择
@@ -388,11 +388,11 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-900 to-zinc-800 text-white">
-      <div className="max-w-6xl mx-auto w-full py-8 px-4">
+      <div className="max-w-6xl mx-auto w-full pt-0 pb-8 px-4">
         {/* Hero Section - 主标题区 */}
         {state.showTopSections && (
           <>
-            <section className="flex flex-col items-center justify-center text-center mb-12" id="hero-section">
+            <section className="flex flex-col items-center justify-center text-center mb-8" id="hero-section">
               <div className="flex items-center justify-center gap-4 mb-4">
                 <img 
                   src="/logo.png" 
@@ -417,19 +417,19 @@ export default function Home() {
                   {t.home.heroTitle}
                 </h1>
               </div>
-              <p className="text-xl md:text-2xl text-yellow-400 font-medium drop-shadow-[0_3px_8px_rgba(255,215,0,0.3)] mb-6">
+              <p className="text-lg md:text-xl text-yellow-400 font-medium drop-shadow-[0_3px_8px_rgba(255,215,0,0.3)] mb-6">
                 {t.home.heroSlogan}
               </p>
-              <p className="text-gray-300 text-lg leading-relaxed">
+              <p className="text-gray-300 text-base leading-relaxed">
                 {t.home.heroDescription}
               </p>
             </section>
 
             {/* Step 1: Role Selection */}
-            <div id="role-section" className="py-12">
+            <div id="role-section" className="py-6">
               <div className="flex items-center mb-6">
                 <div className="bg-orange-500 w-2 h-8 rounded-full mr-4"></div>
-                <h2 className="text-3xl font-bold text-white">
+                <h2 className="text-xl font-bold text-white">
                   <span className="text-orange-400">第一步:</span> 选择一个角色
                 </h2>
               </div>
@@ -439,6 +439,35 @@ export default function Home() {
                   selectedCategory={selectedCategory}
                   onSelectCategory={handleCategorySelect}
                 />
+                {(() => {
+                  const categoryData = stylePresets.find(p => p.category === selectedCategory);
+                  if (!categoryData) return null;
+
+                  return (
+                    <div className="mt-6 p-4 bg-zinc-800/60 border border-zinc-700/80 rounded-2xl animate-fade-in-down shadow-lg">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-gray-600 to-gray-700 rounded-lg flex items-center justify-center text-3xl shadow-inner">
+                          {categoryData.icon}
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-base text-gray-400">您当前选择的角色:</h3>
+                          <p className="text-base font-bold text-white mb-2">{categoryData.category}</p>
+                          <p className="text-sm text-gray-300 leading-relaxed mb-3">
+                            {categoryData.description}
+                          </p>
+                          <a href="#style-section" onClick={(e) => { e.preventDefault(); scrollToSection('style-section'); }}
+                             className="text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1">
+                            共有 {categoryData.styles.length} 种专业风格可选
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10.293 15.707a1 1 0 010-1.414L14.586 10l-4.293-4.293a1 1 0 111.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                              <path fillRule="evenodd" d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 5.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
 
@@ -446,7 +475,7 @@ export default function Home() {
             <div id="style-section" className="py-12 scroll-mt-40">
               <div className="flex items-center mb-6">
                 <div className="bg-blue-500 w-2 h-8 rounded-full mr-4"></div>
-                <h2 className="text-3xl font-bold text-white">
+                <h2 className="text-xl font-bold text-white">
                   <span className="text-blue-400">第二步:</span> 选择一个风格
                 </h2>
               </div>
@@ -463,7 +492,7 @@ export default function Home() {
             <div id="prompt-input-section" className="py-12 scroll-mt-40">
               <div className="flex items-center mb-6">
                 <div className="bg-green-500 w-2 h-8 rounded-full mr-4"></div>
-                <h2 className="text-3xl font-bold text-white">
+                <h2 className="text-xl font-bold text-white">
                   <span className="text-green-400">第三步:</span> 输入你的提示词
                 </h2>
               </div>

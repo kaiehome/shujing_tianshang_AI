@@ -441,7 +441,7 @@ export class OAuthService {
             nickname: userInfo.username,
             avatar_url: userInfo.avatar,
             email: userInfo.email || null,
-            points: 30, // 新用户赠送30点
+            points: 10, // 新用户赠送10点
             is_active: true
           })
           .select()
