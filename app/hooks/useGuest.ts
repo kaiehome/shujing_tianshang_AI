@@ -10,7 +10,7 @@ interface GuestState {
 }
 
 interface UseGuestReturn {
-  isGuest: boolean
+  isGuestMode: boolean
   canGenerate: boolean
   remainingGenerations: number
   maxDailyGenerations: number
@@ -198,7 +198,7 @@ export function useGuest(): UseGuestReturn {
   }
 
   return {
-    isGuest: guestState.isGuest,
+    isGuestMode: guestState.isGuest,
     canGenerate: !guestState.isGuest || (
       guestState.dailyGenerations < guestState.maxDailyGenerations && 
       !antiSpamMessage

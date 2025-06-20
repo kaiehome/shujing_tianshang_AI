@@ -17,16 +17,46 @@ import Logo from './components/Logo'
 import { generateImage } from './lib/ai'
 import { getCurrentLocale, getLocalizedPath } from './lib/i18n'
 import { useTranslations } from './hooks/useTranslations'
+import { useAuth } from './hooks/useAuth'
+import { useImageManager } from './hooks/useImageManager'
+import Image from 'next/image'
+import GenerationForm from './components/GenerationForm'
+import ImagePreviewPanel from './components/ImagePreviewPanel'
+import StylePresets from './components/StylePresets'
 // import MyGallery from './components/MyGallery' // 可后续弹窗或独立页
+
+interface PageState {
+  showRegistrationHint: boolean
+  showTopSections: boolean
+}
+
+interface GenerationParams {
+  aspectRatio: string;
+  quality: string;
+  styleStrength: number;
+  resolution: string;
+  lighting: string;
+  mood: string;
+}
 
 export default function Home() {
   const { t, locale: currentLocale } = useTranslations()
+  const router = useRouter()
+  const { isAuthenticated, isVip } = useAuth()
+  const { isGuestMode } = useGuest()
+  const { images, isGenerating } = useImageManager()
+
+  const [state, setState] = useState<PageState>({
+    showRegistrationHint: false,
+    showTopSections: true
+  })
 
   const [selectedCategory, setSelectedCategory] = useState(stylePresets[0].category)
-  const [selectedStyleIndex, setSelectedStyleIndex] = useState(0)
+  const [selectedStyleIndex, setSelectedStyleIndex] = useState<number>(-1)
+  const [selectedStyle, setSelectedStyle] = useState<string>('')
   const [prompt, setPrompt] = useState('')
   const [promptPlaceholder, setPromptPlaceholder] = useState(stylePresets[0].styles[0].prompt_zh)
-  const [params, setParams] = useState({
+  const [params, setParams] = useState<GenerationParams>({
     aspectRatio: '1:1',
     quality: 'standard',
     styleStrength: 0.7,
@@ -36,16 +66,13 @@ export default function Home() {
   })
   
   const [generatedImages, setGeneratedImages] = useState<ImageData[]>([])
-  const [isGenerating, setIsGenerating] = useState(false)
   const [currentGenerationStep, setCurrentGenerationStep] = useState(0)
   const [generationProgress, setGenerationProgress] = useState(0)
   const [generationError, setGenerationError] = useState<string | null>(null)
   const [showGenerationSteps, setShowGenerationSteps] = useState(false)
-  const [showTopSections, setShowTopSections] = useState(true)
 
   // 访客模式相关状态
   const {
-    isGuest,
     remainingGenerations,
     maxDailyGenerations,
     canGenerate,
@@ -60,9 +87,7 @@ export default function Home() {
   const [hasShownWelcomeBonus, setHasShownWelcomeBonus] = useState(false)
   const [userEngagementLevel, setUserEngagementLevel] = useState(0) // 用户参与度评分
 
-  const router = useRouter()
-
-  const [uploadedImages, setUploadedImages] = useState<File[]>([])
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
 
   // 滚动到指定区域的辅助函数
@@ -94,8 +119,9 @@ export default function Home() {
   }
 
   // 处理风格选择
-  const handleApplyStyle = (prompt: string, idx: number) => {
+  const handleSelect = (prompt: string, idx: number) => {
     setSelectedStyleIndex(idx)
+    setSelectedStyle(prompt)
     setPromptPlaceholder(prompt)
     setPrompt('') // 清空用户输入的提示词
     
@@ -106,37 +132,14 @@ export default function Home() {
   }
 
   // 智能注册引导逻辑
-  const shouldShowRegistrationHint = () => {
-    if (!isGuest) return false
-    
-    // 基于用户参与度和使用情况判断引导时机
-    if (userEngagementLevel >= 3 && !hasShownWelcomeBonus) {
-      return 'engagement_bonus' // 高参与度用户奖励
-    }
-    
-    if (remainingGenerations === 1 && generatedImages.length > 0) {
-      return 'last_chance' // 最后一次机会
-    }
-    
-    if (remainingGenerations === 0) {
-      return 'limit_reached' // 次数用完
-    }
-    
-    return false
-  }
+  const shouldShowRegistrationHint = !isAuthenticated && !isGuestMode && images.length > 0
 
   // 监听用户参与度变化，智能显示注册提示
   useEffect(() => {
-    const hint = shouldShowRegistrationHint()
-    if (hint === 'engagement_bonus' && !hasShownWelcomeBonus) {
-      setHasShownWelcomeBonus(true)
-      // 延迟显示，给用户更好的体验
-      setTimeout(() => {
-        setModalTrigger('engagement_bonus' as any)
-        setShowRegistrationModal(true)
-      }, 2000)
+    if (shouldShowRegistrationHint) {
+      setState(prev => ({ ...prev, showRegistrationHint: true }))
     }
-  }, [userEngagementLevel, hasShownWelcomeBonus, isGuest])
+  }, [shouldShowRegistrationHint])
 
   const simulateGenerationSteps = async () => {
     setShowGenerationSteps(true)
@@ -165,83 +168,144 @@ export default function Home() {
   const handleGenerate = async () => {
     if (isGenerating) return
     
-    setIsGenerating(true)
+    // 重置生成状态
     setShowGenerationSteps(true)
+    setCurrentGenerationStep(0)
+    setGenerationProgress(0)
     setGenerationError(null)
     
     try {
       const finalPrompt = prompt.trim() || promptPlaceholder
       
-      // 如果有上传图片，则使用第一张图片进行生成
-      const imageUrls = await generateImage(
-        finalPrompt,
-        selectedCategory,
-        (progress: number) => {
-          console.log('图像生成进度:', progress)
-        },
-        'tongyi_wanxiang',
-        uploadedImages.length > 0 ? uploadedImages[0] : undefined
-      )
+      // 第一步：AI理解分析
+      setCurrentGenerationStep(0)
+      setGenerationProgress(100)
       
-      if (imageUrls && imageUrls.length > 0) {
-        // 将URL数组转换为ImageData数组
-        const imageData: ImageData[] = imageUrls.map((url, index) => ({
-          id: `img-${Date.now()}-${index}`,
-          url,
-          timestamp: Date.now() + index,
-          prompt: finalPrompt,
-          style: selectedCategory,
-          batchId: `batch-${Date.now()}`
-        }))
+      // 第二步：提示词优化
+      setCurrentGenerationStep(1)
+      setGenerationProgress(100)
+      
+      // 第三步：图像生成
+      setCurrentGenerationStep(2)
+      setGenerationProgress(0)
+      
+      const formData = new FormData()
+      formData.append('prompt', finalPrompt)
+      
+      const paramsToPass = {
+        ...params,
+        style: selectedCategory
+      }
+      formData.append('parameters', JSON.stringify(paramsToPass))
+
+      // 添加所有上传的图片
+      uploadedFiles.forEach((file, index) => {
+        formData.append(`image_${index}`, file)
+      })
+      
+      // 创建生成任务
+      const createResponse = await fetch('/api/generate', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!createResponse.ok) {
+        const error = await createResponse.json();
+        throw new Error(error.error || '生成失败');
+      }
+
+      const { taskId } = await createResponse.json();
+      
+      // 轮询任务状态
+      let retries = 0;
+      const maxRetries = 30; // 最多等待90秒
+      
+      while (retries < maxRetries) {
+        const statusFormData = new FormData()
+        statusFormData.append('taskId', taskId)
         
-        setGeneratedImages(imageData)
+        const statusResponse = await fetch('/api/generate', {
+          method: 'POST',
+          body: statusFormData,
+        });
+
+        if (!statusResponse.ok) {
+          const error = await statusResponse.json();
+          throw new Error(error.error || '查询任务状态失败');
+        }
+
+        const { status, progress, images, error } = await statusResponse.json();
         
-        // 使用 incrementGeneration 减少剩余次数
-        incrementGeneration(finalPrompt)
+        if (error) {
+          throw new Error(error);
+        }
+
+        setGenerationProgress(progress);
+
+        if (status === 'SUCCEEDED' && images) {
+          // 第四步：结果展示
+          setCurrentGenerationStep(3)
+          setGenerationProgress(100)
+          
+          // 将URL数组转换为ImageData数组
+          const imageData: ImageData[] = images.map((url: string, index: number) => ({
+            id: `img-${Date.now()}-${index}`,
+            url,
+            timestamp: Date.now() + index,
+            prompt: finalPrompt,
+            style: selectedCategory,
+            batchId: `batch-${Date.now()}`
+          }));
+          
+          setGeneratedImages(imageData);
+          
+          // 使用 incrementGeneration 减少剩余次数
+          incrementGeneration(finalPrompt);
+          
+          // 显示成功提示
+          toast.success('图像生成成功！', {
+            duration: 3000,
+            style: {
+              background: '#10B981',
+              color: 'white',
+            },
+          });
+          
+          // 滚动到结果区域
+          setTimeout(() => {
+            const resultsSection = document.getElementById('results-section');
+            if (resultsSection) {
+              resultsSection.scrollIntoView({ behavior: 'smooth' });
+            }
+          }, 500);
+          
+          return;
+        } else if (status === 'FAILED') {
+          throw new Error('生成失败');
+        }
         
-        // 显示成功提示
-        toast.success('图像生成成功！', {
-          duration: 3000,
-          style: {
-            background: '#10B981',
-            color: 'white',
-          },
-        })
-        
-        // 滚动到结果区域
-        setTimeout(() => {
-          const resultsSection = document.getElementById('results-section')
-          if (resultsSection) {
-            resultsSection.scrollIntoView({ behavior: 'smooth' })
-          }
-        }, 500)
-        
-      } else {
-        throw new Error('生成失败，未返回图像')
+        await new Promise(resolve => setTimeout(resolve, 3000)); // 等待3秒
+        retries++;
       }
       
-    } catch (error) {
-      console.error('生成错误:', error)
-      setGenerationError(error instanceof Error ? error.message : '生成失败，请重试')
+      throw new Error('生成超时');
+    } catch (error: any) {
+      console.error('生成失败:', error);
+      setGenerationError(error.message);
       
-      toast.error('图像生成失败，请重试', {
-        duration: 4000,
+      toast.error(error.message || '生成失败，请重试', {
+        duration: 3000,
         style: {
           background: '#EF4444',
           color: 'white',
         },
-      })
-    } finally {
-      setIsGenerating(false)
-      setShowGenerationSteps(false)
-      setCurrentGenerationStep(0)
-      setGenerationProgress(0)
+      });
     }
-  }
+  };
 
   // 改进的引导注册处理函数
   const handleDownloadAttempt = () => {
-    if (isGuest) {
+    if (isGuestMode) {
       setModalTrigger('download_attempt')
       setShowRegistrationModal(true)
     } else {
@@ -251,7 +315,7 @@ export default function Home() {
   }
 
   const handleSaveAttempt = () => {
-    if (isGuest) {
+    if (isGuestMode) {
       setModalTrigger('save_attempt')
       setShowRegistrationModal(true)
     } else {
@@ -261,7 +325,7 @@ export default function Home() {
   }
 
   const handleEditAttempt = () => {
-    if (isGuest) {
+    if (isGuestMode) {
       setModalTrigger('edit_attempt')
       setShowRegistrationModal(true)
     } else {
@@ -293,45 +357,40 @@ export default function Home() {
   }
 
   // 处理图片上传
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (!files) return
-
-    // 转换为数组并限制最多3张图片
-    const newFiles = Array.from(files).slice(0, 3 - uploadedImages.length)
-
-    // 验证文件
-    const validFiles = newFiles.filter(file => {
-      // 检查文件类型
-      if (!file.type.startsWith('image/')) {
-        toast.error('请只上传图片文件')
-        return false
-      }
-      // 检查文件大小
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error(`图片 ${file.name} 超过5MB限制`)
-        return false
-      }
-      return true
-    })
-
-    if (validFiles.length > 0) {
-      // 合并现有图片和新图片
-      const updatedImages = [...uploadedImages, ...validFiles]
-      const updatedPreviews = [
-        ...imagePreviews,
-        ...validFiles.map(file => URL.createObjectURL(file))
-      ]
-      setUploadedImages(updatedImages)
-      setImagePreviews(updatedPreviews)
+  const handleImageUpload = (file: File) => {
+    if (uploadedFiles.length >= 3) {
+      toast.error('最多只能上传3张图片');
+      return;
     }
+    const newFiles = [...uploadedFiles, file];
+    setUploadedFiles(newFiles);
+
+    const newPreviews = [...imagePreviews, URL.createObjectURL(file)];
+    setImagePreviews(newPreviews);
+  }
+
+  // 处理图片移除
+  const handleRemoveImage = (index: number) => {
+    // 从文件列表中移除
+    const newFiles = uploadedFiles.filter((_, i) => i !== index);
+    setUploadedFiles(newFiles);
+
+    // 从预览列表中移除并释放内存
+    const newPreviews = imagePreviews.filter((_, i) => {
+      if (i === index) {
+        URL.revokeObjectURL(imagePreviews[i]);
+        return false;
+      }
+      return true;
+    });
+    setImagePreviews(newPreviews);
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-900 to-zinc-800 text-white">
       <div className="max-w-6xl mx-auto w-full py-8 px-4">
         {/* Hero Section - 主标题区 */}
-        {showTopSections && (
+        {state.showTopSections && (
           <>
             <section className="flex flex-col items-center justify-center text-center mb-12" id="hero-section">
               <div className="flex items-center justify-center gap-4 mb-4">
@@ -356,7 +415,7 @@ export default function Home() {
                   }}
                 >
                   {t.home.heroTitle}
-          </h1>
+                </h1>
               </div>
               <p className="text-xl md:text-2xl text-yellow-400 font-medium drop-shadow-[0_3px_8px_rgba(255,215,0,0.3)] mb-6">
                 {t.home.heroSlogan}
@@ -366,181 +425,70 @@ export default function Home() {
               </p>
             </section>
 
-            {/* Category Selection - 角色选择区 */}
-            <section className="mb-8" id="category-section">
-              <div className="bg-gradient-to-r from-zinc-800/80 to-zinc-700/80 backdrop-blur-sm rounded-2xl py-8 px-8 border border-zinc-600/30 shadow-2xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-2 h-8 bg-gradient-to-b from-orange-400 to-orange-600 rounded-full"></div>
-                  <h2 className="text-xl font-bold text-white">第一步：选择您的创作角色</h2>
-                  <span className="text-sm text-gray-400 bg-gray-700/50 px-3 py-1 rounded-full">共6种角色</span>
-                </div>
-                <StyleCategoryTabs selected={selectedCategory} setSelected={handleCategorySelect} />
+            {/* Step 1: Role Selection */}
+            <div id="role-section" className="py-12">
+              <div className="flex items-center mb-6">
+                <div className="bg-orange-500 w-2 h-8 rounded-full mr-4"></div>
+                <h2 className="text-3xl font-bold text-white">
+                  <span className="text-orange-400">第一步:</span> 选择一个角色
+                </h2>
               </div>
-            </section>
-
-            {/* Style Selection - 风格选择区 */}
-            <section className="mb-8" id="style-section">
-              <div className="bg-gradient-to-r from-zinc-800/80 to-zinc-700/80 backdrop-blur-sm rounded-2xl py-8 px-8 border border-zinc-600/30 shadow-2xl">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-2 h-8 bg-gradient-to-b from-blue-400 to-blue-600 rounded-full"></div>
-                  <h2 className="text-xl font-bold text-white">第二步：选择图像风格</h2>
-                  <span className="text-sm text-orange-400 bg-orange-900/30 px-3 py-1 rounded-full border border-orange-500/20">
-                    当前角色：{selectedCategory}
-            </span>
-          </div>
-                <StyleCardGrid 
-                  selectedCategory={selectedCategory} 
-                  selectedStyleIndex={selectedStyleIndex} 
-                  onApplyStyle={handleApplyStyle} 
+              <div className="p-6 bg-zinc-900/50 rounded-2xl border border-zinc-800/50 shadow-2xl shadow-black/20">
+                <StyleCategoryTabs
+                  categories={stylePresets.map(p => p.category)}
+                  selectedCategory={selectedCategory}
+                  onSelectCategory={handleCategorySelect}
                 />
               </div>
-            </section>
+            </div>
+
+            {/* Step 2: Style Selection */}
+            <div id="style-section" className="py-12 scroll-mt-40">
+              <div className="flex items-center mb-6">
+                <div className="bg-blue-500 w-2 h-8 rounded-full mr-4"></div>
+                <h2 className="text-3xl font-bold text-white">
+                  <span className="text-blue-400">第二步:</span> 选择一个风格
+                </h2>
+              </div>
+              <div className="p-6 bg-zinc-900/50 rounded-2xl border border-zinc-800/50 shadow-2xl shadow-black/20">
+                <StyleCardGrid
+                  styles={stylePresets.find(p => p.category === selectedCategory)?.styles || []}
+                  onSelect={handleSelect}
+                  selectedIndex={selectedStyleIndex}
+                />
+              </div>
+            </div>
+
+            {/* Step 3: Prompt Input */}
+            <div id="prompt-input-section" className="py-12 scroll-mt-40">
+              <div className="flex items-center mb-6">
+                <div className="bg-green-500 w-2 h-8 rounded-full mr-4"></div>
+                <h2 className="text-3xl font-bold text-white">
+                  <span className="text-green-400">第三步:</span> 输入你的提示词
+                </h2>
+              </div>
+              <div className="p-6 bg-zinc-900/50 rounded-2xl border border-zinc-800/50 shadow-2xl shadow-black/20">
+                <PromptPanelV2
+                  prompt={prompt}
+                  onChange={setPrompt}
+                  placeholder={promptPlaceholder}
+                  onGenerate={handleGenerate}
+                  isGenerating={isGenerating}
+                  remainingGenerations={remainingGenerations}
+                  maxDailyGenerations={maxDailyGenerations}
+                  canGenerate={canGenerate}
+                  isAuthenticated={isAuthenticated}
+                  isVip={isVip}
+                  params={params}
+                  setParams={setParams}
+                  onImageUpload={handleImageUpload}
+                  onRemoveImage={handleRemoveImage}
+                  imagePreviews={imagePreviews}
+                />
+              </div>
+            </div>
           </>
         )}
-
-        {/* Input Section - 描述输入区 */}
-        <section className="mb-8" id="prompt-input-section">
-          <div className="bg-gradient-to-r from-zinc-800/80 to-zinc-700/80 backdrop-blur-sm rounded-2xl py-8 px-8 border border-zinc-600/30 shadow-2xl">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-2 h-8 bg-gradient-to-b from-green-400 to-green-600 rounded-full"></div>
-              <h2 className="text-xl font-bold text-white">第三步：描述您想要的图像</h2>
-              <span className="text-sm text-blue-400 bg-blue-900/30 px-3 py-1 rounded-full border border-blue-500/20">
-                支持中文输入
-              </span>
-              {/* 访客状态显示 */}
-              {isGuest && (
-                <span className="text-sm text-orange-400 bg-orange-900/30 px-3 py-1 rounded-full border border-orange-500/20">
-                  访客体验 {remainingGenerations}/{maxDailyGenerations} 次生成
-                </span>
-              )}
-        </div>
-
-            <PromptPanelV2
-              prompt={prompt}
-              setPrompt={setPrompt}
-              params={params}
-              setParams={setParams}
-              promptPlaceholder={promptPlaceholder}
-            />
-            
-            {/* 图生图上传区 */}
-            <div className="mt-6 mb-4">
-              <label className="block text-sm text-gray-400 mb-2">可选：上传图片进行图生图（Image-to-Image），最多3张</label>
-              <div className="flex items-center gap-4">
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  id="image-upload"
-                  style={{ display: 'none' }}
-                  onChange={handleImageUpload}
-                />
-                <button
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded shadow transition-all"
-                  onClick={() => document.getElementById('image-upload')?.click()}
-                  type="button"
-                  disabled={uploadedImages.length >= 3}
-                >
-                  上传图片
-                </button>
-                <div className="flex gap-2">
-                  {imagePreviews.map((preview, index) => (
-                    <div key={index} className="relative">
-                      <img src={preview} alt={`预览 ${index + 1}`} className="w-20 h-20 object-cover rounded-lg border border-zinc-600" />
-                      <button
-                        className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                        onClick={() => {
-                          const newImages = [...uploadedImages];
-                          const newPreviews = [...imagePreviews];
-                          newImages.splice(index, 1);
-                          newPreviews.splice(index, 1);
-                          setUploadedImages(newImages);
-                          setImagePreviews(newPreviews);
-                        }}
-                        type="button"
-                      >×</button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="text-xs text-gray-500 mt-2">
-                支持JPG/PNG，每张最大5MB。已上传 {uploadedImages.length}/3 张
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between mt-6">
-              <div className="flex items-center gap-3">
-                {/* 移除AI智能优化开关，因为已经有步骤进度显示 */}
-        </div>
-
-              <button
-                onClick={handleGenerate}
-                disabled={isGenerating || (!prompt.trim() && (!promptPlaceholder || promptPlaceholder === '您想看到什么？')) || !canGenerate}
-                className={`px-8 py-3 rounded-xl font-bold text-lg shadow-lg transition-all duration-300 transform hover:scale-105 disabled:scale-100 disabled:cursor-not-allowed flex items-center gap-2 ${
-                  !canGenerate 
-                    ? 'bg-gray-600 text-gray-400'
-                    : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-red-500 hover:to-orange-500 disabled:from-gray-600 disabled:to-gray-700 text-white'
-                }`}
-                title={!canGenerate ? '今日试用次数已用完，注册即可继续使用' : ''}
-              >
-                {isGenerating ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    生成中...
-                  </>
-                ) : !canGenerate ? (
-                  <>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                    次数已用完
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    立即生成
-                  </>
-                )}
-              </button>
-            </div>
-
-
-
-            {/* 访客限制提示 */}
-            {isGuest && remainingGenerations <= 1 && remainingGenerations > 0 && (
-              <div className="mt-4 p-3 bg-orange-500/10 border border-orange-500/20 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L5.732 15.5c-.77.833.192 2.5 1.732 2.5z" />
-                      </svg>
-                  <span className="text-orange-400 text-sm">
-                    {t.home.guestLimitNotice.replace('{count}', remainingGenerations.toString())}
-                    <button 
-                      onClick={() => router.push(getLocalizedPath('/login', currentLocale))}
-                      className="underline hover:text-orange-300 ml-1"
-                    >
-                      {t.home.registerForPoints}
-                    </button>
-                  </span>
-                </div>
-                  </div>
-            )}
-
-            {/* 防刷消息提示 */}
-            {antiSpamMessage && (
-              <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L5.732 15.5c-.77.833.192 2.5 1.732 2.5z" />
-                  </svg>
-                  <span className="text-red-400 text-sm">{antiSpamMessage}</span>
-                </div>
-            </div>
-            )}
-          </div>
-        </section>
 
         {/* Results Section - 生成结果区 */}
         {(generatedImages.length > 0 || isGenerating) && (
@@ -562,7 +510,7 @@ export default function Home() {
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-2 h-8 bg-gradient-to-b from-purple-400 to-purple-600 rounded-full"></div>
                 <h2 className="text-xl font-bold text-white">{t.home.generateResults}</h2>
-                {isGuest && (
+                {isGuestMode && (
                   <span className="text-sm text-orange-400 bg-orange-900/30 px-3 py-1 rounded-full border border-orange-500/20">
                     {t.home.guestMode}
                   </span>
@@ -572,7 +520,7 @@ export default function Home() {
               <ImageResultGallery 
                 images={generatedImages} 
                 isGenerating={isGenerating}
-                isGuest={isGuest}
+                isGuest={isGuestMode}
                 onDownloadAttempt={handleDownloadAttempt}
                 onSaveAttempt={handleSaveAttempt}
                 onEditAttempt={handleEditAttempt}
@@ -648,7 +596,7 @@ export default function Home() {
         </section>
 
         {/* 开发测试区域 */}
-        {process.env.NODE_ENV === 'development' && isGuest && (
+        {process.env.NODE_ENV === 'development' && isGuestMode && (
           <section className="mb-8">
             <div className="bg-gradient-to-r from-yellow-600/20 to-orange-600/20 border border-yellow-500/30 rounded-xl p-4">
               <h3 className="text-yellow-400 font-bold mb-2 flex items-center gap-2">

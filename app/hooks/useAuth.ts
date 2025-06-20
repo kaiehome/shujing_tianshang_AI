@@ -8,6 +8,7 @@ interface UseAuthReturn {
   user: User | null
   loading: boolean
   isAuthenticated: boolean
+  isVip: boolean
   
   // 认证方法
   sendSmsCode: (phone: string, type?: 'login' | 'register') => Promise<{ success: boolean; error?: string }>
@@ -182,6 +183,7 @@ export function useAuth(): UseAuthReturn {
     user,
     loading,
     isAuthenticated: !!user,
+    isVip: !!user?.isVip,
     sendSmsCode,
     loginWithPhone,
     loginWithWechat,

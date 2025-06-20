@@ -19,6 +19,7 @@ interface UseImageManagerReturn {
   hasMore: boolean
   currentPage: number
   totalCount: number
+  isGenerating: boolean
   
   // 图像操作
   saveImage: (imageData: Omit<ImageData, 'id' | 'timestamp'>) => Promise<ImageData | null>
@@ -97,6 +98,7 @@ export function useImageManager({
   const [userTags, setUserTags] = useState<ImageTag[]>([])
   const [sortBy, setSortBy] = useState<ImageSortBy>('created_at')
   const [sortOrder, setSortOrder] = useState<ImageSortOrder>('desc')
+  const [isGenerating, setIsGenerating] = useState(false)
   
   // Refs for performance optimization
   const abortControllerRef = useRef<AbortController | null>(null)
@@ -636,6 +638,7 @@ export function useImageManager({
     hasMore,
     currentPage,
     totalCount,
+    isGenerating,
     
     // 图像操作
     saveImage,
@@ -664,7 +667,7 @@ export function useImageManager({
     removeImageFromList,
     clearCache
   }), [
-    images, debouncedLoadRequest, error, hasMore, currentPage, totalCount,
+    images, debouncedLoadRequest, error, hasMore, currentPage, totalCount, isGenerating,
     saveImage, deleteImage, toggleFavorite,
     userTags, createTag, addTagToImage, removeTagFromImage,
     batchFavorite, batchUnfavorite, batchDelete,

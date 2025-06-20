@@ -13,11 +13,15 @@ const categoryIcons: Record<string, string> = {
   "非遗--蜀锦蜀绣制作者": "🧵"
 }
 
-export default function StyleCategoryTabs({ selected, setSelected }: {
-  selected: string;
-  setSelected: (cat: string) => void;
+export default function StyleCategoryTabs({ 
+  categories,
+  selectedCategory,
+  onSelectCategory
+}: {
+  categories: string[];
+  selectedCategory: string;
+  onSelectCategory: (category: string) => void;
 }) {
-  const categories = stylePresets.map(c => c.category)
   const isShuJin = (cat: string) => cat === '非遗--蜀锦蜀绣制作者'
   // 判断是否为最后一个且总数为奇数
   const isLastOdd = (cat: string, idx: number) => isShuJin(cat) && categories.length % 2 === 1 && idx === categories.length - 1
@@ -27,9 +31,9 @@ export default function StyleCategoryTabs({ selected, setSelected }: {
         {categories.map((cat, idx) => (
           <button
             key={cat}
-            onClick={() => setSelected(cat)}
+            onClick={() => onSelectCategory(cat)}
             className={`group relative p-6 rounded-2xl border-2 transition-all duration-300 transform hover:scale-102 ${
-              selected === cat 
+              selectedCategory === cat 
                 ? 'bg-gradient-to-br from-orange-500 to-red-500 border-orange-400 text-white shadow-xl shadow-orange-500/25 scale-102' 
                 : 'bg-zinc-700/50 border-zinc-600 text-gray-200 hover:border-orange-400 hover:bg-zinc-600/70 hover:text-white'
             } ${isLastOdd(cat, idx) ? 'lg:col-span-3 mx-auto w-full' : isShuJin(cat) ? 'col-span-2 lg:col-span-2 justify-self-center w-full' : ''}`}
@@ -37,7 +41,7 @@ export default function StyleCategoryTabs({ selected, setSelected }: {
           >
             <div className="flex flex-col items-center text-center space-y-3">
               <div className={`text-3xl transition-transform duration-300 ${
-                selected === cat ? 'scale-110' : 'group-hover:scale-110'
+                selectedCategory === cat ? 'scale-110' : 'group-hover:scale-110'
               }`}>
                 {categoryIcons[cat] || '🎯'}
               </div>
@@ -46,7 +50,7 @@ export default function StyleCategoryTabs({ selected, setSelected }: {
                   {cat}
                 </h3>
                 <div className={`text-xs opacity-75 ${
-                  selected === cat ? 'text-orange-100' : 'text-gray-400'
+                  selectedCategory === cat ? 'text-orange-100' : 'text-gray-400'
                 }`}>
                   {stylePresets.find(c => c.category === cat)?.styles.length || 0} 种风格
                 </div>
@@ -54,7 +58,7 @@ export default function StyleCategoryTabs({ selected, setSelected }: {
             </div>
             
             {/* 选中指示器 */}
-            {selected === cat && (
+            {selectedCategory === cat && (
               <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
                 <svg className="w-4 h-4 text-black" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -69,17 +73,17 @@ export default function StyleCategoryTabs({ selected, setSelected }: {
       <div className="mt-6 p-4 bg-zinc-800/30 rounded-xl border border-zinc-700/30">
         <div className="flex items-start gap-3">
           <div className="text-2xl">
-            {categoryIcons[selected] || '🎯'}
+            {categoryIcons[selectedCategory] || '🎯'}
           </div>
           <div>
             <h4 className="font-semibold text-white mb-1">
-              您选择了：{selected}
+              您选择了：{selectedCategory}
             </h4>
             <p className="text-sm text-gray-300 leading-relaxed">
-              {getCategoryDescription(selected)}
+              {getCategoryDescription(selectedCategory)}
             </p>
             <div className="mt-2 text-xs text-blue-400">
-              共有 {stylePresets.find(c => c.category === selected)?.styles.length || 0} 种专业风格可选
+              共有 {stylePresets.find(c => c.category === selectedCategory)?.styles.length || 0} 种专业风格可选
             </div>
           </div>
         </div>

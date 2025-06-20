@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server'
 import { OpenAI } from 'openai'
 
-const openai = new OpenAI({ 
+// Only initialize OpenAI client if API key is available
+const openai = process.env.OPENAI_API_KEY ? new OpenAI({ 
   apiKey: process.env.OPENAI_API_KEY,
   timeout: 30000 // 30秒超时
-})
+}) : null
 
 export async function POST(request: Request) {
   try {
@@ -17,6 +18,14 @@ export async function POST(request: Request) {
     
     if (text.length > 1000) {
       return NextResponse.json({ error: '输入内容过长，请控制在1000字符以内' }, { status: 400 })
+    }
+
+    // If OpenAI API key is not available, return a mock response
+    if (!openai) {
+      return NextResponse.json({ 
+        result: text, // Return original text
+        usage: { total_tokens: 0 }
+      })
     }
     
     let systemPrompt = ''

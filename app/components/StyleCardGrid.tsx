@@ -3,9 +3,13 @@ import React, { useState, useEffect } from 'react'
 import { stylePresets } from '../data/stylePresets'
 
 interface StyleCardGridProps {
-  selectedCategory: string,
-  selectedStyleIndex: number,
-  onApplyStyle: (prompt: string, idx: number) => void
+  styles: Array<{
+    name: string;
+    description: string;
+    prompt_zh: string;
+  }>;
+  selectedIndex: number;
+  onSelect: (prompt: string, idx: number) => void;
 }
 
 // 预览图映射函数 - 将风格名称映射到实际的文件名
@@ -35,11 +39,9 @@ const getPreviewImagePath = (styleName: string): string => {
   return imageMap[styleName] || '/presets/placeholder.jpg'
 }
 
-const StyleCardGrid: React.FC<StyleCardGridProps> = ({ selectedCategory, selectedStyleIndex, onApplyStyle }) => {
+const StyleCardGrid: React.FC<StyleCardGridProps> = ({ styles, selectedIndex, onSelect }) => {
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set())
   const [failedImages, setFailedImages] = useState<Set<string>>(new Set())
-  
-  const category = stylePresets.find(c => c.category === selectedCategory)
 
   // 图片加载成功处理
   const handleImageLoad = (styleName: string) => {
@@ -57,37 +59,33 @@ const StyleCardGrid: React.FC<StyleCardGridProps> = ({ selectedCategory, selecte
     setFailedImages(new Set())
     
     // 预加载当前分类的所有图片
-    if (category?.styles) {
-      category.styles.forEach((style) => {
-        const img = new Image()
-        img.src = getPreviewImagePath(style.name)
-        img.onload = () => handleImageLoad(style.name)
-        img.onerror = () => {
-          // 尝试加载占位图
-          const fallbackImg = new Image()
-          fallbackImg.src = '/presets/placeholder.jpg'
-          fallbackImg.onload = () => handleImageLoad(style.name)
-          fallbackImg.onerror = () => handleImageError(style.name)
-        }
-      })
-    }
-  }, [selectedCategory, category])
-
-  if (!category) return null
+    styles.forEach((style) => {
+      const img = new Image()
+      img.src = getPreviewImagePath(style.name)
+      img.onload = () => handleImageLoad(style.name)
+      img.onerror = () => {
+        // 尝试加载占位图
+        const fallbackImg = new Image()
+        fallbackImg.src = '/presets/placeholder.jpg'
+        fallbackImg.onload = () => handleImageLoad(style.name)
+        fallbackImg.onerror = () => handleImageError(style.name)
+      }
+    })
+  }, [styles])
 
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {category.styles.map((style, idx) => {
+        {styles.map((style, idx) => {
           const isLoaded = loadedImages.has(style.name)
           const isFailed = failedImages.has(style.name)
           const shouldShowLoading = !isLoaded && !isFailed
           
           return (
             <div
-              key={`${selectedCategory}-${idx}`}
+              key={idx}
               className={`group relative bg-gradient-to-br from-zinc-700/60 to-zinc-800/60 backdrop-blur-sm rounded-2xl border-2 transition-all duration-300 transform hover:scale-102 overflow-hidden ${
-                selectedStyleIndex === idx
+                selectedIndex === idx
                   ? 'border-blue-400 ring-4 ring-blue-400/30 shadow-xl shadow-blue-500/25 scale-102'
                   : 'border-zinc-600/50 hover:border-blue-400/70 hover:shadow-lg'
               }`}
@@ -144,7 +142,7 @@ const StyleCardGrid: React.FC<StyleCardGridProps> = ({ selectedCategory, selecte
                 </div>
                 
                 {/* 选中标识 */}
-                {selectedStyleIndex === idx && (
+                {selectedIndex === idx && (
                   <div className="absolute top-3 right-3 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center shadow-lg z-20">
                     <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -157,7 +155,7 @@ const StyleCardGrid: React.FC<StyleCardGridProps> = ({ selectedCategory, selecte
               <div className="p-6">
                 <div className="mb-3">
                   <h3 className={`font-bold text-lg mb-2 transition-colors ${
-                    selectedStyleIndex === idx ? 'text-blue-400' : 'text-white group-hover:text-blue-300'
+                    selectedIndex === idx ? 'text-blue-400' : 'text-white group-hover:text-blue-300'
                   }`}>
                     {style.name}
                   </h3>
@@ -179,14 +177,14 @@ const StyleCardGrid: React.FC<StyleCardGridProps> = ({ selectedCategory, selecte
                 {/* 操作按钮 */}
                 <div className="flex gap-2">
                   <button
-                    onClick={() => onApplyStyle(style.prompt_zh, idx)}
+                    onClick={() => onSelect(style.prompt_zh, idx)}
                     className={`flex-1 py-2 px-4 rounded-lg font-semibold text-sm transition-all duration-200 ${
-                      selectedStyleIndex === idx
+                      selectedIndex === idx
                         ? 'bg-blue-500 text-white shadow-lg'
                         : 'bg-orange-500 hover:bg-orange-600 text-white hover:shadow-lg transform hover:scale-105'
                     }`}
                   >
-                    {selectedStyleIndex === idx ? '已选中' : '使用此风格'}
+                    {selectedIndex === idx ? '已选中' : '使用此风格'}
                   </button>
                   
                   <button className="px-3 py-2 bg-zinc-600 hover:bg-zinc-500 text-gray-300 hover:text-white rounded-lg transition-colors duration-200">
@@ -201,8 +199,6 @@ const StyleCardGrid: React.FC<StyleCardGridProps> = ({ selectedCategory, selecte
           )
         })}
       </div>
-      
-
     </div>
   )
 }
