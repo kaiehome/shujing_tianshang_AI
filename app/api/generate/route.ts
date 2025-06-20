@@ -32,14 +32,14 @@ async function createGenerationTask(prompt: string, parameters?: any, image?: Fi
       model,
       input: {
         prompt,
-        ...parameters
+        size: '1024x1024'
       },
       parameters: {
         n: 4,
-        size: '1024x1024',
-        ...parameters
+        ...(parameters && Object.keys(parameters).length > 0 ? parameters : {})
       }
     };
+    
     requestBody = JSON.stringify(payload);
     headers['Content-Type'] = 'application/json';
   }

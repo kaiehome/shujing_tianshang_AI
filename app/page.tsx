@@ -70,6 +70,7 @@ export default function Home() {
   const [generationProgress, setGenerationProgress] = useState(0)
   const [generationError, setGenerationError] = useState<string | null>(null)
   const [showGenerationSteps, setShowGenerationSteps] = useState(false)
+  const [isLocalGenerating, setIsLocalGenerating] = useState(false) // 本地生成状态
 
   // 访客模式相关状态
   const {
@@ -166,35 +167,64 @@ export default function Home() {
   }
 
   const handleGenerate = async () => {
-    if (isGenerating) return
+    if (isGenerating || isLocalGenerating) return
     
-    // 重置生成状态
+    // 立即设置生成状态和显示进度
+    setIsLocalGenerating(true)
     setShowGenerationSteps(true)
     setCurrentGenerationStep(0)
     setGenerationProgress(0)
     setGenerationError(null)
     
+    // 立即滚动到进度区域
+    setTimeout(() => {
+      const progressSection = document.getElementById('generation-progress-section');
+      if (progressSection) {
+        // 使用自定义滚动，确保有足够的顶部间距
+        const elementPosition = progressSection.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - 120; // 120px的顶部间距
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }, 100);
+    
     try {
       const finalPrompt = prompt.trim() || promptPlaceholder
       
-      // 第一步：AI理解分析
+      // 第一步：准备创作 - 模拟准备过程
       setCurrentGenerationStep(0)
-      setGenerationProgress(100)
+      for (let i = 0; i <= 100; i += 20) {
+        setGenerationProgress(i)
+        await new Promise(resolve => setTimeout(resolve, 100))
+      }
       
-      // 第二步：提示词优化
+      // 第二步：理解需求 - 模拟分析过程
       setCurrentGenerationStep(1)
-      setGenerationProgress(100)
+      setGenerationProgress(0)
+      for (let i = 0; i <= 100; i += 25) {
+        setGenerationProgress(i)
+        await new Promise(resolve => setTimeout(resolve, 150))
+      }
       
-      // 第三步：图像生成
+      // 第三步：AI绘画中 - 真实的生成过程
       setCurrentGenerationStep(2)
       setGenerationProgress(0)
       
       const formData = new FormData()
       formData.append('prompt', finalPrompt)
       
+      // 恢复参数功能，现在API已经修复
+      const categoryId = stylePresets.find(p => p.category === selectedCategory)?.id || '<auto>';
+      
+      // 移除resolution和aspectRatio，保留其他用户设置的参数
+      const { resolution, aspectRatio, ...otherParams } = params;
+
       const paramsToPass = {
-        ...params,
-        style: selectedCategory
+        ...otherParams,
+        style: categoryId,
       }
       formData.append('parameters', JSON.stringify(paramsToPass))
 
@@ -240,12 +270,16 @@ export default function Home() {
           throw new Error(error);
         }
 
-        setGenerationProgress(progress);
+        // 更平滑的进度更新
+        setGenerationProgress(Math.max(progress, 10)); // 确保至少显示10%进度
 
         if (status === 'SUCCEEDED' && images) {
-          // 第四步：结果展示
+          // 第四步：作品呈现 - 模拟完成过程
           setCurrentGenerationStep(3)
-          setGenerationProgress(100)
+          for (let i = 0; i <= 100; i += 33) {
+            setGenerationProgress(i)
+            await new Promise(resolve => setTimeout(resolve, 100))
+          }
           
           // 将URL数组转换为ImageData数组
           const imageData: ImageData[] = images.map((url: string, index: number) => ({
@@ -263,7 +297,7 @@ export default function Home() {
           incrementGeneration(finalPrompt);
           
           // 显示成功提示
-          toast.success('图像生成成功！', {
+          toast.success('🎉 图像生成成功！', {
             duration: 3000,
             style: {
               background: '#10B981',
@@ -271,13 +305,19 @@ export default function Home() {
             },
           });
           
+          // 延迟隐藏进度条，让用户看到完成状态
+          setTimeout(() => {
+            setShowGenerationSteps(false)
+            setIsLocalGenerating(false)
+          }, 2000);
+          
           // 滚动到结果区域
           setTimeout(() => {
             const resultsSection = document.getElementById('results-section');
             if (resultsSection) {
               resultsSection.scrollIntoView({ behavior: 'smooth' });
             }
-          }, 500);
+          }, 1000);
           
           return;
         } else if (status === 'FAILED') {
@@ -288,10 +328,11 @@ export default function Home() {
         retries++;
       }
       
-      throw new Error('生成超时');
+      throw new Error('生成超时，请重试');
     } catch (error: any) {
       console.error('生成失败:', error);
       setGenerationError(error.message);
+      setIsLocalGenerating(false);
       
       toast.error(error.message || '生成失败，请重试', {
         duration: 3000,
@@ -502,7 +543,7 @@ export default function Home() {
                   onChange={setPrompt}
                   placeholder={promptPlaceholder}
                   onGenerate={handleGenerate}
-                  isGenerating={isGenerating}
+                  isGenerating={isGenerating || isLocalGenerating}
                   remainingGenerations={remainingGenerations}
                   maxDailyGenerations={maxDailyGenerations}
                   canGenerate={canGenerate}
@@ -519,22 +560,22 @@ export default function Home() {
           </>
         )}
 
+        {/* 生成进度区域 - 独立显示，更显眼 */}
+        {showGenerationSteps && (
+          <section className="mb-8" id="generation-progress-section">
+            <GenerationStepsProgress
+              isVisible={showGenerationSteps}
+              currentStep={currentGenerationStep}
+              steps={DEFAULT_GENERATION_STEPS}
+              progress={generationProgress}
+              error={generationError}
+            />
+          </section>
+        )}
+
         {/* Results Section - 生成结果区 */}
-        {(generatedImages.length > 0 || isGenerating) && (
+        {(generatedImages.length > 0 || isGenerating || isLocalGenerating) && (
           <section className="mb-8" id="results-section">
-            {/* 生成步骤进度 */}
-            {showGenerationSteps && (
-              <div className="mb-6">
-                <GenerationStepsProgress
-                  isVisible={showGenerationSteps}
-                  currentStep={currentGenerationStep}
-                  steps={DEFAULT_GENERATION_STEPS}
-                  progress={generationProgress}
-                  error={generationError}
-                />
-              </div>
-            )}
-            
             <div className="bg-gradient-to-r from-zinc-800/80 to-zinc-700/80 backdrop-blur-sm rounded-2xl py-8 px-8 border border-zinc-600/30 shadow-2xl">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-2 h-8 bg-gradient-to-b from-purple-400 to-purple-600 rounded-full"></div>
@@ -548,7 +589,7 @@ export default function Home() {
               
               <ImageResultGallery 
                 images={generatedImages} 
-                isGenerating={isGenerating}
+                isGenerating={isGenerating || isLocalGenerating}
                 isGuest={isGuestMode}
                 onDownloadAttempt={handleDownloadAttempt}
                 onSaveAttempt={handleSaveAttempt}
