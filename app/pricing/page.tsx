@@ -65,11 +65,11 @@ export default function PricingPage() {
 
     const pointPackages = [
         {
-            id: '30',
-            points: '30 点',
-            price: '¥9',
-            generations: '生成 30 次图像（每次4图）',
-            validity: '有效期 30 天',
+            id: '50',
+            points: '50 点',
+            price: '¥15',
+            generations: '生成 50 次图像（每次4图）',
+            validity: '有效期 60 天',
             description: '轻量使用',
             color: 'from-blue-500 to-cyan-500',
             popular: false
@@ -87,7 +87,7 @@ export default function PricingPage() {
         {
             id: '300',
             points: '300 点',
-            price: '¥66',
+            price: '¥75',
             generations: '生成 300 次图像',
             validity: '推荐给高频创作者',
             description: '高频使用',
@@ -100,18 +100,18 @@ export default function PricingPage() {
         {
             id: 'monthly',
             title: '月度会员',
-            price: '¥29',
+            price: '¥42',
             period: '/ 月',
-            features: ['无限生成图像', '无水印下载', '全部模板解锁', '优先生成队列'],
+            features: ['每月可获得200点数', '无水印下载', '全部模板解锁', '优先生成队列', ],
             color: 'from-blue-500 to-purple-500',
             comingSoon: true
         },
         {
-            id: 'quarterly',
-            title: '季度会员',
-            price: '¥79',
-            period: '/ 季',
-            features: ['月度会员全部权益', '额外赠送专属活动点数', '专属会员标识', '提前体验新功能'],
+            id: 'semiannual',
+            title: '半年会员',
+            price: '¥180',
+            period: '/ 半年',
+            features: ['可获得1200点数', '无水印下载', '全部模板解锁', '优先生成队列', '优先新功能体验'],
             color: 'from-purple-500 to-pink-500',
             comingSoon: true,
             popular: true
@@ -119,9 +119,9 @@ export default function PricingPage() {
         {
             id: 'yearly',
             title: '年度会员',
-            price: '¥288',
+            price: '¥325',
             period: '/ 年',
-            features: ['季度会员全部权益', '最高优惠价格', '专属客服支持', '优先新功能体验'],
+            features: ['每年可获得2500点数', '无水印下载', '全部模板解锁', '优先生成队列', '优先新功能体验'],
             color: 'from-orange-500 to-red-500',
             comingSoon: true
         }
@@ -158,7 +158,7 @@ export default function PricingPage() {
                     <div className="bg-gradient-to-r from-zinc-800/80 to-zinc-700/80 backdrop-blur-sm rounded-2xl py-8 px-8 border border-zinc-600/30 shadow-2xl">
                         <div className="flex items-center gap-3 mb-8">
                             <div className="w-2 h-8 bg-gradient-to-b from-blue-400 to-blue-600 rounded-full"></div>
-                            <h2 className="text-2xl font-bold text-white">点数包（一次性购买）</h2>
+                            <h2 className="text-2xl font-bold text-white">点数包</h2>
                             <span className="text-sm text-blue-400 bg-blue-900/30 px-3 py-1 rounded-full border border-blue-500/20">
                                 适合偶尔使用、轻量需求的用户
                             </span>
@@ -234,7 +234,7 @@ export default function PricingPage() {
                             {membershipPlans.map((plan) => (
                                 <div 
                                     key={plan.id}
-                                    className={`group relative bg-gradient-to-br from-zinc-700/60 to-zinc-800/60 backdrop-blur-sm p-6 rounded-xl border-2 transition-all duration-300 transform hover:scale-102 ${
+                                    className={`group relative bg-gradient-to-br from-zinc-700/60 to-zinc-800/60 backdrop-blur-sm p-6 rounded-xl border-2 transition-all duration-300 transform hover:scale-102 flex flex-col h-full ${
                                         plan.popular
                                             ? 'border-yellow-400 ring-4 ring-yellow-400/30 shadow-xl shadow-yellow-500/25'
                                             : 'border-zinc-600/50 hover:border-purple-400/70'
@@ -259,7 +259,7 @@ export default function PricingPage() {
                                         </div>
                                     </div>
                                     
-                                    <div className="space-y-3 mb-6">
+                                    <div className="space-y-3 mb-6 flex-1">
                                         {plan.features.map((feature, index) => (
                                             <div key={index} className="flex items-center gap-2 text-sm text-gray-300">
                                                 <svg className="w-4 h-4 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
@@ -271,7 +271,7 @@ export default function PricingPage() {
                                     </div>
                                     
                                     <button 
-                                        className={`w-full py-3 rounded-xl font-bold text-lg transition-all duration-200 ${
+                                        className={`w-full py-3 rounded-xl font-bold text-lg transition-all duration-200 mt-auto ${
                                             plan.comingSoon
                                                 ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
                                                 : `bg-gradient-to-r ${plan.color} text-white hover:shadow-lg transform hover:scale-105`
