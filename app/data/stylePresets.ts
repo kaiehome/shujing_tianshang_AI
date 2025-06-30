@@ -13,7 +13,10 @@ export const stylePresets = [
         description_zh: "干净留白，摄影感构图，ins风生活美学",
         description_en: "Clean whitespace, photographic composition, ins-style lifestyle aesthetics",
         prompt_zh: "极简风格静物摄影，干净的白色背景，柔和的自然光线，精致的生活用品摆放，大量留白空间，ins风格构图，高级质感，细腻阴影",
-        prompt_en: "Minimalist still life photography, clean white background, soft natural light, exquisite daily objects, lots of whitespace, ins-style composition, premium texture, delicate shadows"
+        prompt_en: "Minimalist still life photography, clean white background, soft natural light, exquisite daily objects, lots of whitespace, ins-style composition, premium texture, delicate shadows",
+        image: "/presets/minimal-ins.jpg",
+        model: "wanx-v1",
+        style: "<photography>"
       },
       {
         name_zh: "治愈系插画",
@@ -21,7 +24,10 @@ export const stylePresets = [
         description_zh: "温暖柔和的色彩，营造情绪疗愈氛围",
         description_en: "Warm and soft colors, creating a healing emotional atmosphere",
         prompt_zh: "温暖治愈系插画，柔和的暖色调，黄昏时分的温柔光线透过窗户，舒适的室内场景，植物和书籍，平静安详的氛围，手绘质感",
-        prompt_en: "Warm healing illustration, soft warm tones, gentle evening light through the window, cozy indoor scene, plants and books, peaceful atmosphere, hand-drawn texture"
+        prompt_en: "Warm healing illustration, soft warm tones, gentle evening light through the window, cozy indoor scene, plants and books, peaceful atmosphere, hand-drawn texture",
+        image: "/presets/healing.jpg",
+        model: "wanx-v1",
+        style: "<flat illustration>"
       },
       {
         name_zh: "生活方式摄影感插画",
@@ -29,7 +35,10 @@ export const stylePresets = [
         description_zh: "摄影构图的插画，描绘日常生活场景",
         description_en: "Illustration with photographic composition, depicting daily life scenes",
         prompt_zh: "日常生活场景插画，摄影构图风格，早晨的咖啡桌或舒适的阅读角落，自然柔和的配色，生活美学，细节丰富，温馨氛围",
-        prompt_en: "Daily life scene illustration, photographic composition style, morning coffee table or cozy reading corner, natural soft color scheme, lifestyle aesthetics, rich details, warm atmosphere"
+        prompt_en: "Daily life scene illustration, photographic composition style, morning coffee table or cozy reading corner, natural soft color scheme, lifestyle aesthetics, rich details, warm atmosphere",
+        image: "/presets/lifestyle.jpg",
+        model: "wanx-v1",
+        style: "<photography>"
       }
     ]
   },
@@ -81,7 +90,10 @@ export const stylePresets = [
         description_zh: "统一品牌调性的视觉插图",
         description_en: "Uniform visual illustration of brand identity",
         prompt_zh: "现代品牌风格插图，简洁的线条设计，统一的视觉语言，适用于网站头图和品牌宣传，专业现代感，商业级质量",
-        prompt_en: "modern brand style, simple line design, unified visual language, suitable for website header and brand promotion, professional modern feel, commercial quality"
+        prompt_en: "modern brand style, simple line design, unified visual language, suitable for website header and brand promotion, professional modern feel, commercial quality",
+        image: "/presets/brand.jpg",
+        model: "wanx-v1",
+        style: "<flat illustration>"
       },
       {
         name_zh: "Logo草图风",
@@ -89,7 +101,9 @@ export const stylePresets = [
         description_zh: "展示LOGO构思阶段的黑白草图",
         description_en: "Showcase black and white sketch of Logo design concept",
         prompt_zh: "LOGO设计草图，黑白手绘线稿风格，创意构思过程，简洁的图形元素，专业设计感，适合展示设计思路",
-        prompt_en: "LOGO design sketch, black and white hand-drawn line drawing style, creative thinking process, simple graphic elements, professional design feel, suitable for showing design ideas"
+        prompt_en: "LOGO design sketch, black and white hand-drawn line drawing style, creative thinking process, simple graphic elements, professional design feel, suitable for showing design ideas",
+        model: "wanx-v1",
+        style: "<sketch>"
       },
       {
         name_zh: "概念视觉板",
@@ -97,7 +111,9 @@ export const stylePresets = [
         description_zh: "多风格灵感集合，拼贴构图",
         description_en: "Multi-style inspiration collection, collage layout",
         prompt_zh: "创意视觉灵感板，拼贴式布局设计，多种元素组合，包含配色方案和设计素材，创意工作者的灵感收集板",
-        prompt_en: "creative visual inspiration board, collage layout design, various elements combination, including color scheme and design materials, creative worker's inspiration collection board"
+        prompt_en: "creative visual inspiration board, collage layout design, various elements combination, including color scheme and design materials, creative worker's inspiration collection board",
+        model: "wanx-v1",
+        style: "<flat illustration>"
       }
     ]
   },
@@ -183,7 +199,9 @@ export const stylePresets = [
         description_zh: "红黄高对比色，带有醒目促销标语",
         description_en: "High contrast red and yellow color scheme, prominent promotional slogan display",
         prompt_zh: "电商促销海报设计，高对比度的红黄配色方案，醒目的优惠信息展示，产品居中突出，商业促销视觉效果",
-        prompt_en: "high contrast red and yellow color scheme, prominent promotional slogan display, product center highlight, commercial promotional visual effect"
+        prompt_en: "high contrast red and yellow color scheme, prominent promotional slogan display, product center highlight, commercial promotional visual effect",
+        model: "wanx-v1",
+        style: "<flat illustration>"
       },
       {
         name_zh: "节日热点模板",
@@ -191,7 +209,9 @@ export const stylePresets = [
         description_zh: "结合节日元素的图像模板",
         description_en: "Holiday theme promotional image, holiday feature element integration",
         prompt_zh: "节日主题宣传图，融入节日特色元素，红金色彩搭配，传达节日喜庆氛围，适合节庆营销推广",
-        prompt_en: "holiday theme promotional image, holiday feature element integration, red and gold color combination, festive atmosphere transmission, suitable for holiday marketing promotion"
+        prompt_en: "holiday theme promotional image, holiday feature element integration, red and gold color combination, festive atmosphere transmission, suitable for holiday marketing promotion",
+        model: "wanx-v1",
+        style: "<flat illustration>"
       },
       {
         name_zh: "商品展示图",
@@ -199,7 +219,10 @@ export const stylePresets = [
         description_zh: "白底置中展示产品，突出商品细节",
         description_en: "White background product center placement, product detail highlight",
         prompt_zh: "产品展示摄影风格，纯白色或浅灰色背景，产品居中摆放，柔和的环境光线，突出商品细节和质感，电商产品图风格",
-        prompt_en: "product display photography style, pure white or light gray background, product center placement, soft environment light, product detail and texture highlight, e-commerce product image style"
+        prompt_en: "product display photography style, pure white or light gray background, product center placement, soft environment light, product detail and texture highlight, e-commerce product image style",
+        image: "/presets/product.jpg",
+        model: "wanx-v1",
+        style: "<photography>"
       }
     ]
   },
@@ -217,15 +240,21 @@ export const stylePresets = [
         description_zh: "非遗介绍、工艺品展示、文化衍生品设计",
         description_en: "Non-fossilized introduction, craft exhibition, cultural derivative design",
         prompt_zh: "一幅精美逼真的蜀绣特写，画中一对栩栩如生的雌雄鸳鸯栖息于荷塘之中。画中着重展现了极其纤细的丝线，营造出柔软的羽毛纹理、波光粼粼的水面倒影以及鲜艳的花卉细节。博物馆级别的玻璃反光略显可见，自然光照明，对焦清晰锐利。",
-        prompt_en: "A highly realistic and delicate close-up of traditional Shu embroidery, showing a pair of lifelike mandarin ducks (male and female) resting peacefully in a lotus pond. The embroidery features extremely fine silk threads that form soft feather textures, shimmering water reflections, and vivid floral patterns. Slight reflections from museum-grade glass are subtly visible. The scene is illuminated by natural daylight with sharp focus and rich detail"
+        prompt_en: "A highly realistic and delicate close-up of traditional Shu embroidery, showing a pair of lifelike mandarin ducks (male and female) resting peacefully in a lotus pond. The embroidery features extremely fine silk threads that form soft feather textures, shimmering water reflections, and vivid floral patterns. Slight reflections from museum-grade glass are subtly visible. The scene is illuminated by natural daylight with sharp focus and rich detail",
+        image: "/presets/shujin-traditional.jpg",
+        model: "wanx-v1",
+        style: "<chinese painting>"
       },
       {
         name_zh: "国风插画风",
-        name_en: "Chinese-style Illustration Style",
-        description_zh: "文创IP包装、文化宣传、年轻化社交传播",
-        description_en: "Cultural and Creative IP packaging, cultural promotion, young social communication",
-        prompt_zh: "迷人的新国风插画，描绘了一位身着汉服的年轻女子，她的长袍上饰有精美的蜀绣蝴蝶和菊花图案。线条细腻，色彩鲜艳和谐，以绿松石色、珊瑚粉色和象牙白色为主。构图优美，花卉边框装饰，营造出梦幻而诗意的氛围。重点展现刺绣图案的美感。",
-        prompt_en: "A captivating New Chinese-style illustration of a young woman dressed in traditional Hanfu. Her flowing robe is adorned with exquisite Shu embroidery featuring butterflies and chrysanthemum patterns. The lines are delicate, and the color palette is vivid yet harmonious, dominated by turquoise, coral pink, and ivory white. The composition is elegant, with floral borders that create a dreamy and poetic atmosphere. The focus is on showcasing the beauty and intricacy of the embroidery designs"
+        name_en: "Chinese Style Illustration",
+        description_zh: "东方美学，融合传统与现代元素",
+        description_en: "Oriental aesthetics, integrating traditional and modern elements",
+        prompt_zh: "国风插画，融合传统水墨与现代设计，色彩淡雅，线条流畅，展现东方美学与文化意蕴。",
+        prompt_en: "Chinese style illustration, blending traditional ink painting with modern design, elegant colors, smooth lines, showcasing oriental aesthetics and cultural connotation.",
+        image: "/presets/shujin-chinese-illustration.jpg",
+        model: "wanx-v1",
+        style: "<chinese painting>"
       },
       {
         name_zh: "博物馆实拍风",
@@ -233,7 +262,10 @@ export const stylePresets = [
         description_zh: "展陈模拟、展览海报、教育科普类视觉输出",
         description_en: "Exhibition simulation, exhibition poster, educational and scientific visual output",
         prompt_zh: "博物馆展品拍摄了一幅大型蜀绣（蜀绣）画框，描绘了一只神秘的麒麟。聚光灯照亮了深海军蓝色天鹅绒背景。在防反光玻璃后拍摄，突出了丝线刺绣令人难以置信的立体感和质感。略带透视效果，展现了华丽的木质画框和壁挂式画框。纪实风格，干净利落，专业至极。",
-        prompt_en: "A museum-style photograph of a large framed Shu embroidery artwork depicting a mystical Qilin. The piece is illuminated by spotlights, highlighting a deep navy velvet background. Shot through anti-reflective glass, the embroidery threads appear incredibly three-dimensional and textured. The composition includes a slight perspective view, revealing the elegant wooden frame and wall-mounted display. The image is documentary-style, clean, crisp, and highly professional"
+        prompt_en: "A museum-style photograph of a large framed Shu embroidery artwork depicting a mystical Qilin. The piece is illuminated by spotlights, highlighting a deep navy velvet background. Shot through anti-reflective glass, the embroidery threads appear incredibly three-dimensional and textured. The composition includes a slight perspective view, revealing the elegant wooden frame and wall-mounted display. The image is documentary-style, clean, crisp, and highly professional",
+        image: "/presets/shujin-museum.jpg",
+        model: "wanx-v1",
+        style: "<photography>"
       }
     ]
   }

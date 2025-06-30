@@ -89,7 +89,12 @@ export const translations = {
         currentStatus: '当前状态: {remaining}/{total} 次',
         antiSpam: '防刷信息: {message}'
       },
-      guideSelectRole: '请选择你的创作角色，体验不同风格！'
+      guideSelectRole: '请选择你的创作角色，体验不同风格！',
+      welcomeBanner: '🎉 新用户专享10点免费额度，注册即领！',
+      welcomeBack: 'Hi，{nickname}，欢迎回来！你已生成{count}张作品。',
+      milestoneReward: '🎁 恭喜你已生成{milestone}张作品，额外赠送{points}点体验额度！',
+      firstGeneration: '👏 你已成功生成第一张作品，继续探索更多风格吧！',
+      festivalBanner: '🎨 节日专属模板限时免费体验！'
     },
     styles: {
       professional: '专业级',
@@ -355,6 +360,10 @@ export const translations = {
       hours: '小时',
       minutes: '分钟',
       seconds: '秒'
+    },
+    growth: {
+      thankYou: "感谢你的每一次创作，愿AI为你的灵感添彩！",
+      milestone: (count: number) => `你已生成${count}张作品，继续探索更多可能吧！`
     }
   },
   en: {
@@ -445,7 +454,12 @@ export const translations = {
         currentStatus: 'Current Status: {remaining}/{total} times',
         antiSpam: 'Anti-spam info: {message}'
       },
-      guideSelectRole: 'Please choose your creative role to explore different styles!'
+      guideSelectRole: 'Please choose your creative role to explore different styles!',
+      welcomeBanner: '🎉 New users get 10 free credits, register now!',
+      welcomeBack: 'Hi, {nickname}, welcome back! You have generated {count} images.',
+      milestoneReward: '🎁 Congrats! You have generated {milestone} images and earned {points} bonus credits!',
+      firstGeneration: '👏 You have generated your first image! Try more styles!',
+      festivalBanner: '🎨 Festival exclusive templates, free for a limited time! '
     },
     styles: {
       professional: 'Professional',
@@ -711,6 +725,10 @@ export const translations = {
       hours: 'Hours',
       minutes: 'Minutes',
       seconds: 'Seconds'
+    },
+    growth: {
+      thankYou: "Thank you for every creation. May AI add color to your inspiration!",
+      milestone: (count: number) => `You have created ${count} works. Keep exploring more possibilities!`
     }
   }
 };

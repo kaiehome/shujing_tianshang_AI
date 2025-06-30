@@ -186,38 +186,51 @@ export default function PromptPanelV2({
         <label className="block text-sm font-medium text-gray-300 mb-3">{t.generation.promptDescription}</label>
         
         {/* 容器设为 relative 和 flex */}
-        <div className="relative mb-4 flex">
-          <textarea
-            className="w-full h-40 bg-zinc-700/80 border border-zinc-600/50 text-white rounded-lg px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-200 hover:border-zinc-500/70 leading-relaxed"
-            style={{paddingLeft: imagePreviews.length > 0 ? `${imagePreviews.length * 4 + 1}rem` : '1rem'}} // 动态计算左侧内边距
-            value={prompt}
-            onChange={e => onChange(e.target.value)}
-            placeholder={placeholder || t.generation.promptPlaceholderDetailed}
-          />
-          
-          {/* 图片上传/预览区域 - absolute 定位到左下角 */}
-          <div className="absolute bottom-3 left-3 flex items-center gap-2">
-            {/* 渲染预览图 */}
-            {imagePreviews.map((previewUrl, index) => (
-              <div key={index} className="relative group w-14 h-14">
-                <img
-                  src={previewUrl}
-                  alt={`Preview ${index + 1}`}
-                  className="w-full h-full object-cover rounded-lg border-2 border-green-500"
-                />
-                <button
-                  onClick={() => onRemoveImage(index)}
-                  className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 transform hover:scale-110"
-                                      title={t.generation.removeImage}
-                >
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-              </div>
-            ))}
-
-            {/* 上传按钮 (当图片少于3张时显示) */}
-            {imagePreviews.length < 3 && (
-              <div className="group relative">
+        <div className="mb-4">
+          {/* 图片上传/预览区域 - 上方纵向排列 */}
+          {imagePreviews.length > 0 && (
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
+              {imagePreviews.map((previewUrl, index) => (
+                <div key={index} className="relative group w-14 h-14">
+                  <img
+                    src={previewUrl}
+                    alt={`Preview ${index + 1}`}
+                    className="w-full h-full object-cover rounded-lg border-2 border-green-500"
+                  />
+                  <button
+                    onClick={() => onRemoveImage(index)}
+                    className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 transform hover:scale-110"
+                    title={t.generation.removeImage}
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                </div>
+              ))}
+              {/* 上传按钮 (当图片少于3张时显示) */}
+              {imagePreviews.length < 3 && (
+                <div className="group relative">
+                  <label>
+                    <input type="file" accept="image/*" onChange={handleImageUploadInternal} className="hidden"/>
+                    <div 
+                      className="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all duration-100 transform hover:scale-105 active:scale-95 hover:shadow-lg hover:shadow-orange-500/30"
+                    >
+                      <svg className="w-6 h-6 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                      <span className="text-xs text-white/70 mt-1">{t.generation.addImage}</span>
+                    </div>
+                  </label>
+                  {/* Custom Tooltip */}
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-100 delay-300 whitespace-nowrap z-10 pointer-events-none">
+                    {t.generation.uploadReference}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-900"></div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          {/* 没有图片时也要显示上传按钮 */}
+          {imagePreviews.length === 0 && (
+            <div className="mb-2">
+              <div className="group relative inline-block">
                 <label>
                   <input type="file" accept="image/*" onChange={handleImageUploadInternal} className="hidden"/>
                   <div 
@@ -233,12 +246,20 @@ export default function PromptPanelV2({
                   <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-900"></div>
                 </div>
               </div>
-            )}
-          </div>
-
-          {/* 字符计数 */}
-          <div className="absolute bottom-2 right-2 text-xs text-gray-500">
-            {prompt.length}/500
+            </div>
+          )}
+          <div className="relative">
+            <textarea
+              className="w-full h-40 bg-zinc-700/80 border border-zinc-600/50 text-white rounded-lg px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-200 hover:border-zinc-500/70 leading-relaxed"
+              value={prompt}
+              onChange={e => onChange(e.target.value)}
+              placeholder={placeholder || t.generation.promptPlaceholderDetailed}
+              maxLength={500}
+            />
+            {/* 字符计数 */}
+            <div className="absolute bottom-2 right-2 text-xs text-gray-500">
+              {prompt.length}/500
+            </div>
           </div>
         </div>
         

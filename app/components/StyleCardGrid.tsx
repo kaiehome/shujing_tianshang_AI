@@ -11,6 +11,7 @@ interface StyleCardGridProps {
     description_en: string;
     prompt_zh: string;
     prompt_en: string;
+    image?: string;
   }>;
   selectedIndex: number | null;
   onSelect: (prompt: string, idx: number) => void;
@@ -66,7 +67,7 @@ const StyleCardGrid: React.FC<StyleCardGridProps> = ({ styles, selectedIndex, on
     // 预加载当前分类的所有图片
     styles.forEach((style) => {
       const img = new Image()
-      img.src = getPreviewImagePath(style.name_zh)
+      img.src = style.image || getPreviewImagePath(style.name_zh)
       img.onload = () => handleImageLoad(style.name_zh)
       img.onerror = () => {
         // 尝试加载占位图
@@ -98,7 +99,7 @@ const StyleCardGrid: React.FC<StyleCardGridProps> = ({ styles, selectedIndex, on
               {/* 预览图片区域 */}
               <div className="relative w-full aspect-square overflow-hidden rounded-t-2xl bg-zinc-800">
                 <img 
-                  src={getPreviewImagePath(style.name_zh)}
+                  src={style.image || getPreviewImagePath(style.name_zh)}
                   alt={`${style.name_zh} 预览`}
                   className={`w-full h-full object-cover transition-all duration-500 group-hover:scale-105 ${
                     isLoaded ? 'opacity-100' : 'opacity-0'
