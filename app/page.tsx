@@ -8,7 +8,7 @@ import GenerationStepsProgress, { DEFAULT_GENERATION_STEPS } from './components/
 // import ImageGenerationStatus from './components/ImageGenerationStatus' // 移除图像生成服务状态组件
 import RegistrationModal from './components/RegistrationModal'
 import DevAntiSpamStatus from './components/DevAntiSpamStatus'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { stylePresets } from './data/stylePresets'
 import { useGuest } from './hooks/useGuest'
 import { useRouter, usePathname } from 'next/navigation'
@@ -51,11 +51,24 @@ export default function Home() {
     showTopSections: true
   })
 
-  const [selectedCategory, setSelectedCategory] = useState(stylePresets[0].category)
+  // 首次引导相关状态
+  const [showCategoryGuide, setShowCategoryGuide] = useState(false)
+  const guideRef = useRef<HTMLDivElement>(null)
+
+  // 获取当前语言下的第一个角色
+  const getDefaultCategory = () => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(`selectedCategory_${currentLocale}`)
+      if (saved) return saved
+    }
+    return currentLocale === 'zh' ? stylePresets[0].category_zh : stylePresets[0].category_en
+  }
+
+  const [selectedCategory, setSelectedCategory] = useState(getDefaultCategory())
   const [selectedStyle, setSelectedStyle] = useState<string | null>(null)
   const [selectedStyleIndex, setSelectedStyleIndex] = useState<number | null>(null)
   const [prompt, setPrompt] = useState('')
-  const [promptPlaceholder, setPromptPlaceholder] = useState('请在这里输入您的创意点子...')
+  const [promptPlaceholder, setPromptPlaceholder] = useState(t.generation.promptPlaceholder)
   const [params, setParams] = useState<GenerationParams>({
     aspectRatio: '1:1',
     quality: 'standard',
@@ -91,31 +104,49 @@ export default function Home() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
 
-  // 滚动到指定区域的辅助函数
-  const scrollToSection = (sectionId: string) => {
-    const section = document.getElementById(sectionId)
-    if (section) {
-      const offset = 50 // 顶部偏移量，单位像素
-      const elementPosition = section.getBoundingClientRect().top
-      const offsetPosition = elementPosition + window.pageYOffset - offset
-      
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      })
-    }
-  }
+  // 选中分类对象
+  const selectedCategoryObj = stylePresets.find(p => (currentLocale === 'zh' ? p.category_zh : p.category_en) === selectedCategory)
 
-  // 处理角色选择
+  // 首次加载时检查是否需要引导
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const guided = localStorage.getItem('categoryGuideShown')
+      if (!guided) {
+        setShowCategoryGuide(true)
+      }
+    }
+  }, [])
+
+  // 监听语言切换，自动同步 selectedCategory
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(`selectedCategory_${currentLocale}`)
+      if (saved) {
+        setSelectedCategory(saved)
+      } else {
+        setSelectedCategory(currentLocale === 'zh' ? stylePresets[0].category_zh : stylePresets[0].category_en)
+      }
+    }
+  }, [currentLocale])
+
+  // 角色切换时记忆选择
   const handleCategorySelect = (category: string) => {
     setSelectedCategory(category)
     setSelectedStyle(null)
     setSelectedStyleIndex(null)
-    const preset = stylePresets.find(p => p.category === category)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(`selectedCategory_${currentLocale}`, category)
+      // 用户主动切换角色时关闭引导
+      if (showCategoryGuide) {
+        setShowCategoryGuide(false)
+        localStorage.setItem('categoryGuideShown', '1')
+      }
+    }
+    const preset = stylePresets.find(p => (currentLocale === 'zh' ? p.category_zh : p.category_en) === category)
     if (preset && preset.styles.length > 0) {
       setPromptPlaceholder(preset.styles[0].prompt_zh)
     } else {
-      setPromptPlaceholder("请在这里输入您的创意点子...")
+      setPromptPlaceholder(t.generation.promptPlaceholder)
     }
   }
 
@@ -217,7 +248,7 @@ export default function Home() {
       formData.append('prompt', finalPrompt)
       
       // 恢复参数功能，现在API已经修复
-      const categoryId = stylePresets.find(p => p.category === selectedCategory)?.id || '<auto>';
+      const categoryId = stylePresets.find(p => (currentLocale === 'zh' ? p.category_zh : p.category_en) === selectedCategory)?.id || '<auto>';
       
       // 移除resolution和aspectRatio，保留其他用户设置的参数
       const { resolution, aspectRatio, ...otherParams } = params;
@@ -400,7 +431,7 @@ export default function Home() {
   // 处理图片上传
   const handleImageUpload = (file: File) => {
     if (uploadedFiles.length >= 3) {
-      toast.error('最多只能上传3张图片');
+      toast.error(t.generation.maxUploadReached);
       return;
     }
     const newFiles = [...uploadedFiles, file];
@@ -425,6 +456,21 @@ export default function Home() {
       return true;
     });
     setImagePreviews(newPreviews);
+  }
+
+  // 滚动到指定区域的辅助函数
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId)
+    if (section) {
+      const offset = 50 // 顶部偏移量，单位像素
+      const elementPosition = section.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.pageYOffset - offset
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+    }
   }
 
   return (
@@ -471,34 +517,39 @@ export default function Home() {
               <div className="flex items-center mb-6">
                 <div className="bg-orange-500 w-2 h-8 rounded-full mr-4"></div>
                 <h2 className="text-xl font-bold text-white">
-                  <span className="text-orange-400">第一步:</span> 选择一个角色
+                  <span className="text-orange-400">{t.home.step1}:</span> {t.home.selectRole}
                 </h2>
               </div>
               <div className="p-6 bg-zinc-900/50 rounded-2xl border border-zinc-800/50 shadow-2xl shadow-black/20">
+                {/* 角色选择引导气泡 */}
+                {showCategoryGuide && (
+                  <div ref={guideRef} className="absolute left-0 right-0 mx-auto z-30 flex justify-center mt-[-2.5rem]">
+                    <div className="bg-yellow-400 text-black px-4 py-2 rounded-full shadow-lg font-semibold animate-bounce">
+                      👈 {t.home.guideSelectRole}
+                    </div>
+                  </div>
+                )}
                 <StyleCategoryTabs
-                  categories={stylePresets.map(p => p.category)}
+                  categories={stylePresets}
                   selectedCategory={selectedCategory}
                   onSelectCategory={handleCategorySelect}
                 />
                 {(() => {
-                  const categoryData = stylePresets.find(p => p.category === selectedCategory);
-                  if (!categoryData) return null;
+                  if (!selectedCategoryObj) return null;
 
                   return (
                     <div className="mt-6 p-4 bg-zinc-800/60 border border-zinc-700/80 rounded-2xl animate-fade-in-down shadow-lg">
                       <div className="flex items-start gap-4">
                         <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-gray-600 to-gray-700 rounded-lg flex items-center justify-center text-3xl shadow-inner">
-                          {categoryData.icon}
+                          {selectedCategoryObj.icon}
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-base text-gray-400">您当前选择的角色:</h3>
-                          <p className="text-base font-bold text-white mb-2">{categoryData.category}</p>
-                          <p className="text-sm text-gray-300 leading-relaxed mb-3">
-                            {categoryData.description}
-                          </p>
+                          <h3 className="text-base text-gray-400">{t.home.currentRole}</h3>
+                          <p className="text-base font-bold text-white mb-2">{selectedCategoryObj ? (currentLocale === 'zh' ? selectedCategoryObj.category_zh : selectedCategoryObj.category_en) : ''}</p>
+                          <p className="text-sm text-gray-300 leading-relaxed mb-3">{selectedCategoryObj ? (currentLocale === 'zh' ? selectedCategoryObj.description_zh : selectedCategoryObj.description_en) : ''}</p>
                           <a href="#style-section" onClick={(e) => { e.preventDefault(); scrollToSection('style-section'); }}
                              className="text-sm font-semibold text-blue-400 hover:text-blue-300 transition-colors flex items-center gap-1">
-                            共有 {categoryData.styles.length} 种专业风格可选
+                            共有 {selectedCategoryObj.styles.length} {t.home.stylesAvailable}
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M10.293 15.707a1 1 0 010-1.414L14.586 10l-4.293-4.293a1 1 0 111.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clipRule="evenodd" />
                               <path fillRule="evenodd" d="M4.293 15.707a1 1 0 010-1.414L8.586 10 4.293 5.707a1 1 0 011.414-1.414l5 5a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0z" clipRule="evenodd" />
@@ -517,14 +568,14 @@ export default function Home() {
               <div className="flex items-center mb-6">
                 <div className="bg-blue-500 w-2 h-8 rounded-full mr-4"></div>
                 <h2 className="text-xl font-bold text-white">
-                  <span className="text-blue-400">第二步:</span> 选择一个风格
+                  <span className="text-blue-400">{t.home.step2}:</span> {t.home.selectStyle}
                 </h2>
               </div>
               <div className="p-6 bg-zinc-900/50 rounded-2xl border border-zinc-800/50 shadow-2xl shadow-black/20">
                 <StyleCardGrid
-                  styles={stylePresets.find(p => p.category === selectedCategory)?.styles || []}
-                  onSelect={handleSelect}
+                  styles={selectedCategoryObj ? selectedCategoryObj.styles : []}
                   selectedIndex={selectedStyleIndex}
+                  onSelect={handleSelect}
                 />
               </div>
             </div>
@@ -534,7 +585,7 @@ export default function Home() {
               <div className="flex items-center mb-6">
                 <div className="bg-green-500 w-2 h-8 rounded-full mr-4"></div>
                 <h2 className="text-xl font-bold text-white">
-                  <span className="text-green-400">第三步:</span> 输入你的提示词
+                  <span className="text-green-400">{t.home.step3}:</span> {t.home.inputPrompt}
                 </h2>
               </div>
               <div className="p-6 bg-zinc-900/50 rounded-2xl border border-zinc-800/50 shadow-2xl shadow-black/20">

@@ -17,7 +17,7 @@ export default function LanguageDropdown() {
     { code: 'en', name: t.language.english, flag: '🇺🇸' }
   ]
 
-  const currentLanguage = languages.find(lang => lang.code === currentLocale) || languages[1]
+  const currentLanguage = languages.find(lang => lang.code === currentLocale) || languages[0]
 
   // 点击外部关闭下拉框
   useEffect(() => {

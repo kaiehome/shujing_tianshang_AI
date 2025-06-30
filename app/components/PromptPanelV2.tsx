@@ -1,68 +1,9 @@
 "use client"
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
+import { useTranslations } from '../hooks/useTranslations'
 
-const paramOptions: Record<string, any> = {
-  aspectRatio: [
-    { value: '1:1', label: '⬜ 1:1 正方形' },
-    { value: '4:3', label: '📺 4:3 传统屏' },
-    { value: '16:9', label: '🖥️ 16:9 宽屏' },
-    { value: '9:16', label: '📱 9:16 竖屏' }
-  ],
-  resolution: [
-    { value: '512x512', label: '512×512 (标准)' },
-    { value: '768x768', label: '768×768 (高清)' },
-    { value: '1024x768', label: '1024×768 (横版高清)' },
-    { value: '768x1024', label: '768×1024 (竖版高清)' },
-    { value: '1024x1024', label: '1024×1024 (超高清)' }
-  ],
-  quality: [
-    { value: 'draft', label: '草图 (快速)' },
-    { value: 'standard', label: '标准质量' },
-    { value: 'high', label: '高质量' },
-    { value: 'ultra', label: '超高质量 (慢)' }
-  ],
-  styleStrength: [
-    { value: 0.3, label: '轻微 (30%)' },
-    { value: 0.5, label: '适中 (50%)' },
-    { value: 0.7, label: '标准 (70%)' },
-    { value: 0.9, label: '强烈 (90%)' }
-  ],
-  lighting: [
-    { value: '', label: '自动光照' },
-    { value: 'soft', label: '柔光' },
-    { value: 'hard', label: '硬光' },
-    { value: 'dramatic', label: '戏剧光' },
-    { value: 'natural', label: '自然光' },
-    { value: 'studio', label: '影棚光' }
-  ],
-  mood: [
-    { value: '', label: '默认氛围' },
-    { value: 'warm', label: '温暖' },
-    { value: 'cool', label: '冷色调' },
-    { value: 'vibrant', label: '鲜艳' },
-    { value: 'muted', label: '柔和' },
-    { value: 'mysterious', label: '神秘' }
-  ]
-}
 
-const paramLabels: Record<string, string> = {
-  aspectRatio: '画面比例',
-  resolution: '图像分辨率',
-  quality: '生成质量', 
-  styleStrength: '风格强度',
-  lighting: '光照效果',
-  mood: '色彩氛围'
-}
-
-const paramDescriptions: Record<string, string> = {
-  aspectRatio: '控制生成图像的宽高比例',
-  resolution: '越高的分辨率生成时间越长',
-  quality: '影响图像细节和生成时间',
-  styleStrength: '控制AI风格应用的强度',
-  lighting: '影响图像的光影效果',
-  mood: '影响图像的整体色调氛围'
-}
 
 interface GenerationParams {
   aspectRatio: string;
@@ -106,6 +47,70 @@ export default function PromptPanelV2({
   onRemoveImage: (index: number) => void;
   imagePreviews: string[];
 }) {
+  const { t } = useTranslations()
+
+  // 动态参数选项
+  const paramOptions: Record<string, any> = {
+    aspectRatio: [
+      { value: '1:1', label: t.generation.paramOptions.aspectRatio['1:1'] },
+      { value: '4:3', label: t.generation.paramOptions.aspectRatio['4:3'] },
+      { value: '16:9', label: t.generation.paramOptions.aspectRatio['16:9'] },
+      { value: '9:16', label: t.generation.paramOptions.aspectRatio['9:16'] }
+    ],
+    resolution: [
+      { value: '512x512', label: t.generation.paramOptions.resolution['512x512'] },
+      { value: '768x768', label: t.generation.paramOptions.resolution['768x768'] },
+      { value: '1024x768', label: t.generation.paramOptions.resolution['1024x768'] },
+      { value: '768x1024', label: t.generation.paramOptions.resolution['768x1024'] },
+      { value: '1024x1024', label: t.generation.paramOptions.resolution['1024x1024'] }
+    ],
+    quality: [
+      { value: 'draft', label: t.generation.paramOptions.quality.draft },
+      { value: 'standard', label: t.generation.paramOptions.quality.standard },
+      { value: 'high', label: t.generation.paramOptions.quality.high },
+      { value: 'ultra', label: t.generation.paramOptions.quality.ultra }
+    ],
+    styleStrength: [
+      { value: 0.3, label: t.generation.paramOptions.styleStrength['0.3'] },
+      { value: 0.5, label: t.generation.paramOptions.styleStrength['0.5'] },
+      { value: 0.7, label: t.generation.paramOptions.styleStrength['0.7'] },
+      { value: 0.9, label: t.generation.paramOptions.styleStrength['0.9'] }
+    ],
+    lighting: [
+      { value: '', label: t.generation.paramOptions.lighting[''] },
+      { value: 'soft', label: t.generation.paramOptions.lighting.soft },
+      { value: 'hard', label: t.generation.paramOptions.lighting.hard },
+      { value: 'dramatic', label: t.generation.paramOptions.lighting.dramatic },
+      { value: 'natural', label: t.generation.paramOptions.lighting.natural },
+      { value: 'studio', label: t.generation.paramOptions.lighting.studio }
+    ],
+    mood: [
+      { value: '', label: t.generation.paramOptions.mood[''] },
+      { value: 'warm', label: t.generation.paramOptions.mood.warm },
+      { value: 'cool', label: t.generation.paramOptions.mood.cool },
+      { value: 'vibrant', label: t.generation.paramOptions.mood.vibrant },
+      { value: 'muted', label: t.generation.paramOptions.mood.muted },
+      { value: 'mysterious', label: t.generation.paramOptions.mood.mysterious }
+    ]
+  }
+
+  const paramLabels: Record<string, string> = {
+    aspectRatio: t.generation.paramLabels.aspectRatio,
+    resolution: t.generation.paramLabels.resolution,
+    quality: t.generation.paramLabels.quality,
+    styleStrength: t.generation.paramLabels.styleStrength,
+    lighting: t.generation.paramLabels.lighting,
+    mood: t.generation.paramLabels.mood
+  }
+
+  const paramDescriptions: Record<string, string> = {
+    aspectRatio: t.generation.paramDescriptions.aspectRatio,
+    resolution: t.generation.paramDescriptions.resolution,
+    quality: t.generation.paramDescriptions.quality,
+    styleStrength: t.generation.paramDescriptions.styleStrength,
+    lighting: t.generation.paramDescriptions.lighting,
+    mood: t.generation.paramDescriptions.mood
+  }
 
   // 内部处理图片上传，调用父组件的回调
   const handleImageUploadInternal = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,12 +118,12 @@ export default function PromptPanelV2({
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      toast.error('请只上传图片文件');
+      toast.error(t.generation.uploadImageFileOnly);
       return;
     }
     
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('图片大小不能超过5MB');
+      toast.error(t.generation.imageSizeLimit);
       return;
     }
 
@@ -178,7 +183,7 @@ export default function PromptPanelV2({
     <div className="w-full max-w-full">
       {/* 提示词输入区 - 包含输入框和参数设置 */}
       <div className="bg-zinc-800/50 border border-zinc-600/30 rounded-lg p-4">
-        <label className="block text-sm font-medium text-gray-300 mb-3">描述提示词</label>
+        <label className="block text-sm font-medium text-gray-300 mb-3">{t.generation.promptDescription}</label>
         
         {/* 容器设为 relative 和 flex */}
         <div className="relative mb-4 flex">
@@ -187,7 +192,7 @@ export default function PromptPanelV2({
             style={{paddingLeft: imagePreviews.length > 0 ? `${imagePreviews.length * 4 + 1}rem` : '1rem'}} // 动态计算左侧内边距
             value={prompt}
             onChange={e => onChange(e.target.value)}
-            placeholder={placeholder || '详细描述您想要生成的图像...'}
+            placeholder={placeholder || t.generation.promptPlaceholderDetailed}
           />
           
           {/* 图片上传/预览区域 - absolute 定位到左下角 */}
@@ -197,13 +202,13 @@ export default function PromptPanelV2({
               <div key={index} className="relative group w-14 h-14">
                 <img
                   src={previewUrl}
-                  alt={`上传预览 ${index + 1}`}
+                  alt={`Preview ${index + 1}`}
                   className="w-full h-full object-cover rounded-lg border-2 border-green-500"
                 />
                 <button
                   onClick={() => onRemoveImage(index)}
                   className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 transform hover:scale-110"
-                  title="移除图片"
+                                      title={t.generation.removeImage}
                 >
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
@@ -219,12 +224,12 @@ export default function PromptPanelV2({
                     className="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all duration-100 transform hover:scale-105 active:scale-95 hover:shadow-lg hover:shadow-orange-500/30"
                   >
                     <svg className="w-6 h-6 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                    <span className="text-xs text-white/70 mt-1">添加</span>
+                    <span className="text-xs text-white/70 mt-1">{t.generation.addImage}</span>
                   </div>
                 </label>
                 {/* Custom Tooltip */}
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-100 delay-300 whitespace-nowrap z-10 pointer-events-none">
-                  上传参考图 (图生图)
+                  {t.generation.uploadReference}
                   <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-900"></div>
                 </div>
               </div>
@@ -247,12 +252,14 @@ export default function PromptPanelV2({
           <div className="text-sm text-gray-400">
             {isAuthenticated ? (
               isVip ? (
-                '无限制使用'
+                t.generation.statusMessages.vip
               ) : (
-                `今日剩余：${remainingGenerations}/${maxDailyGenerations}次`
+                t.generation.statusMessages.remainingToday
+                  .replace('{remaining}', remainingGenerations.toString())
+                  .replace('{total}', maxDailyGenerations.toString())
               )
             ) : (
-              '访客模式：限时免费体验'
+              t.generation.statusMessages.guestMode
             )}
           </div>
           
@@ -275,14 +282,14 @@ export default function PromptPanelV2({
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                生成中...
+                {t.generation.generating}
               </>
             ) : (
               <>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                立即生成
+                {t.generation.generateNow}
               </>
             )}
           </button>
@@ -297,14 +304,13 @@ export default function PromptPanelV2({
           </svg>
           <div className="flex-1">
             <div className="text-blue-400 text-sm font-medium mb-1">
-              💡 描述提示
+              {t.generation.promptTips.title}
             </div>
             <p className="text-blue-300 text-sm leading-relaxed">
               {!prompt.trim() ? (
-                <>可以直接点击<span className="font-semibold">&quot;立即生成&quot;</span>使用当前风格的默认提示词，
-                也可以输入自己的描述来生成个性化图像。</>
+                t.generation.promptTips.emptyPrompt
               ) : (
-                <>描述越详细，生成的图像越符合您的期望。可以包含：物体、场景、风格、颜色、光线等细节。</>
+                t.generation.promptTips.withPrompt
               )}
             </p>
           </div>

@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useTranslations } from '../../hooks/useTranslations'
 
 interface OrderInfo {
   orderId?: string
@@ -16,6 +17,7 @@ export default function PaymentSuccessPage() {
   const searchParams = useSearchParams()
   const [countdown, setCountdown] = useState(10)
   const [orderInfo, setOrderInfo] = useState<OrderInfo>({})
+  const { t } = useTranslations()
 
   useEffect(() => {
     // 获取订单信息
@@ -161,7 +163,7 @@ export default function PaymentSuccessPage() {
               onClick={handleGoHome}
               className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg shadow-orange-500/30"
             >
-              立即开始创作 🚀
+              {t.home.registerButton}
             </button>
 
             <button

@@ -24,7 +24,7 @@ export default function Footer() {
               <div className="w-8 h-8 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center">
                 <span className="text-white text-xs font-bold">AI</span>
               </div>
-              <span className="text-gray-300 text-sm">AI驱动创作</span>
+              <span className="text-gray-300 text-sm">{t.brand.aiDriven}</span>
             </div>
           </div>
 

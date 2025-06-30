@@ -4,6 +4,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { PRICING_CONFIG, type BillingCycle } from '../lib/pricingConfig'
 import Link from 'next/link'
 import { getCurrentLocale, getLocalizedPath } from '../lib/i18n'
+import { useTranslations } from '../hooks/useTranslations'
 
 export default function PricingPage() {
     const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean | null>(null)
@@ -11,6 +12,7 @@ export default function PricingPage() {
     const pathname = usePathname()
     const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
     const currentLocale = getCurrentLocale(pathname)
+    const { t } = useTranslations()
 
     // 检查用户登录状态
     useEffect(() => {
@@ -66,31 +68,31 @@ export default function PricingPage() {
     const pointPackages = [
         {
             id: '50',
-            points: '50 点',
-            price: '¥15',
-            generations: '生成 50 次图像（每次4图）',
-            validity: '有效期 60 天',
-            description: '轻量使用',
+            points: t.pricing.pointPackages.package50.points,
+            price: t.pricing.pointPackages.package50.price,
+            generations: t.pricing.pointPackages.package50.generations,
+            validity: t.pricing.pointPackages.package50.validity,
+            description: t.pricing.pointPackages.package50.description,
             color: 'from-blue-500 to-cyan-500',
             popular: false
         },
         {
             id: '100',
-            points: '100 点',
-            price: '¥27',
-            generations: '生成 100 次图像',
-            validity: '更划算的选择',
-            description: '平衡选择',
+            points: t.pricing.pointPackages.package100.points,
+            price: t.pricing.pointPackages.package100.price,
+            generations: t.pricing.pointPackages.package100.generations,
+            validity: t.pricing.pointPackages.package100.validity,
+            description: t.pricing.pointPackages.package100.description,
             color: 'from-purple-500 to-pink-500',
             popular: true
         },
         {
             id: '300',
-            points: '300 点',
-            price: '¥75',
-            generations: '生成 300 次图像',
-            validity: '推荐给高频创作者',
-            description: '高频使用',
+            points: t.pricing.pointPackages.package300.points,
+            price: t.pricing.pointPackages.package300.price,
+            generations: t.pricing.pointPackages.package300.generations,
+            validity: t.pricing.pointPackages.package300.validity,
+            description: t.pricing.pointPackages.package300.description,
             color: 'from-orange-500 to-red-500',
             popular: false
         }
@@ -99,29 +101,29 @@ export default function PricingPage() {
     const membershipPlans = [
         {
             id: 'monthly',
-            title: '月度会员',
-            price: '¥42',
-            period: '/ 月',
-            features: ['每月可获得200点数', '无水印下载', '全部模板解锁', '优先生成队列', ],
+            title: t.pricing.membership.monthly.title,
+            price: t.pricing.membership.monthly.price,
+            period: t.pricing.membership.monthly.period,
+            features: t.pricing.membership.monthly.features,
             color: 'from-blue-500 to-purple-500',
             comingSoon: true
         },
         {
             id: 'semiannual',
-            title: '半年会员',
-            price: '¥180',
-            period: '/ 半年',
-            features: ['可获得1200点数', '无水印下载', '全部模板解锁', '优先生成队列', '优先新功能体验'],
+            title: t.pricing.membership.semiannual.title,
+            price: t.pricing.membership.semiannual.price,
+            period: t.pricing.membership.semiannual.period,
+            features: t.pricing.membership.semiannual.features,
             color: 'from-purple-500 to-pink-500',
             comingSoon: true,
             popular: true
         },
         {
             id: 'yearly',
-            title: '年度会员',
-            price: '¥325',
-            period: '/ 年',
-            features: ['每年可获得2500点数', '无水印下载', '全部模板解锁', '优先生成队列', '优先新功能体验'],
+            title: t.pricing.membership.yearly.title,
+            price: t.pricing.membership.yearly.price,
+            period: t.pricing.membership.yearly.period,
+            features: t.pricing.membership.yearly.features,
             color: 'from-orange-500 to-red-500',
             comingSoon: true
         }
@@ -139,17 +141,17 @@ export default function PricingPage() {
                             </svg>
                         </div>
                         <h1 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-500 bg-clip-text text-transparent">
-                            价格方案
+                            {t.pricing.title}
                         </h1>
                     </div>
                     <p className="text-xl text-gray-300 max-w-3xl leading-relaxed mb-4 whitespace-nowrap">
-                        灵活计费，按需付费 - 点数制与会员订阅双重选择
+                        {t.pricing.subtitle}
                     </p>
                     <div className="flex items-center gap-2 text-sm text-orange-400 bg-orange-900/20 px-4 py-2 rounded-full border border-orange-500/30">
                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
                         </svg>
-                        满足不同用户的使用频率和预算需求
+                        {t.pricing.description}
                     </div>
                 </section>
 
@@ -158,9 +160,9 @@ export default function PricingPage() {
                     <div className="bg-gradient-to-r from-zinc-800/80 to-zinc-700/80 backdrop-blur-sm rounded-2xl py-8 px-8 border border-zinc-600/30 shadow-2xl">
                         <div className="flex items-center gap-3 mb-8">
                             <div className="w-2 h-8 bg-gradient-to-b from-blue-400 to-blue-600 rounded-full"></div>
-                            <h2 className="text-2xl font-bold text-white">点数包</h2>
+                            <h2 className="text-2xl font-bold text-white">{t.pricing.pointPackages.title}</h2>
                             <span className="text-sm text-blue-400 bg-blue-900/30 px-3 py-1 rounded-full border border-blue-500/20">
-                                适合偶尔使用、轻量需求的用户
+                                {t.pricing.pointPackages.subtitle}
                             </span>
                         </div>
                         
@@ -177,7 +179,7 @@ export default function PricingPage() {
                                     {pkg.popular && (
                                         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                                             <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg">
-                                                推荐
+                                                {t.pricing.pointPackages.recommended}
                                             </span>
                                         </div>
                                     )}
@@ -210,7 +212,7 @@ export default function PricingPage() {
                                         onClick={() => handlePointPackagePurchase(pkg.id)}
                                         className={`w-full py-3 rounded-xl font-bold text-lg transition-all duration-200 transform hover:scale-105 bg-gradient-to-r ${pkg.color} text-white hover:shadow-lg`}
                                     >
-                                        立即购买
+                                        {t.pricing.pointPackages.buyNow}
                                     </button>
                                 </div>
                             ))}
@@ -223,11 +225,11 @@ export default function PricingPage() {
                     <div className="bg-gradient-to-r from-zinc-800/80 to-zinc-700/80 backdrop-blur-sm rounded-2xl py-8 px-8 border border-zinc-600/30 shadow-2xl">
                         <div className="flex items-center gap-3 mb-8">
                             <div className="w-2 h-8 bg-gradient-to-b from-purple-400 to-purple-600 rounded-full"></div>
-                            <h2 className="text-2xl font-bold text-white">高级会员订阅</h2>
+                            <h2 className="text-2xl font-bold text-white">{t.pricing.membership.title}</h2>
                             <span className="text-sm text-purple-400 bg-purple-900/30 px-3 py-1 rounded-full border border-purple-500/20">
-                                即将上线
+                                {t.pricing.membership.subtitle}
                             </span>
-                            <span className="text-sm text-gray-400">适合重度使用用户</span>
+                            <span className="text-sm text-gray-400">{t.pricing.membership.description}</span>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -243,7 +245,7 @@ export default function PricingPage() {
                                     {plan.popular && (
                                         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                                             <span className="bg-gradient-to-r from-yellow-500 to-orange-500 text-black px-4 py-1 rounded-full text-sm font-bold shadow-lg flex items-center gap-1">
-                                                👑 推荐
+                                                👑 {t.pricing.pointPackages.recommended}
                                             </span>
                                         </div>
                                     )}
@@ -278,7 +280,7 @@ export default function PricingPage() {
                                         }`}
                                         disabled={plan.comingSoon}
                                     >
-                                        {plan.comingSoon ? '即将上线' : '立即订阅'}
+                                        {plan.comingSoon ? t.pricing.membership.comingSoon : t.pricing.membership.subscribe}
                                     </button>
                                 </div>
                             ))}
@@ -293,23 +295,23 @@ export default function PricingPage() {
                             <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
                             </svg>
-                            <h3 className="text-2xl font-bold text-green-300">免费体验权益</h3>
+                            <h3 className="text-2xl font-bold text-green-300">{t.pricing.freeBenefits.title}</h3>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
                             <div className="bg-green-900/20 border border-green-500/30 rounded-xl p-6">
                                 <div className="text-4xl mb-3">🎁</div>
-                                <h4 className="text-lg font-bold text-green-300 mb-2">注册礼包</h4>
-                                <p className="text-green-200 text-sm">新用户赠送 10 点免费生成点数<br/>（限时3天内使用）</p>
+                                <h4 className="text-lg font-bold text-green-300 mb-2">{t.pricing.freeBenefits.signupGift.title}</h4>
+                                <p className="text-green-200 text-sm">{t.pricing.freeBenefits.signupGift.description}</p>
                             </div>
                             <div className="bg-blue-900/20 border border-blue-500/30 rounded-xl p-6">
                                 <div className="text-4xl mb-3">🎯</div>
-                                <h4 className="text-lg font-bold text-blue-300 mb-2">活动奖励</h4>
-                                <p className="text-blue-200 text-sm">参与打卡、分享、任务<br/>可领取点数奖励</p>
+                                <h4 className="text-lg font-bold text-blue-300 mb-2">{t.pricing.freeBenefits.activityRewards.title}</h4>
+                                <p className="text-blue-200 text-sm">{t.pricing.freeBenefits.activityRewards.description}</p>
                             </div>
                             <div className="bg-purple-900/20 border border-purple-500/30 rounded-xl p-6">
                                 <div className="text-4xl mb-3">🎨</div>
-                                <h4 className="text-lg font-bold text-purple-300 mb-2">节日模板</h4>
-                                <p className="text-purple-200 text-sm">部分节日模板限时<br/>对所有用户免费开放</p>
+                                <h4 className="text-lg font-bold text-purple-300 mb-2">{t.pricing.freeBenefits.holidayTemplates.title}</h4>
+                                <p className="text-purple-200 text-sm">{t.pricing.freeBenefits.holidayTemplates.description}</p>
                             </div>
                         </div>
                     </div>
@@ -322,16 +324,16 @@ export default function PricingPage() {
                             <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
                             </svg>
-                            <h3 className="text-lg font-bold text-yellow-300">注意事项</h3>
+                            <h3 className="text-lg font-bold text-yellow-300">{t.pricing.importantNotes.title}</h3>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-300">
                             <div className="flex items-start gap-2">
                                 <span className="text-yellow-400">•</span>
-                                <span>每次点击「生成图像」将消耗 1 点（默认生成4张）</span>
+                                <span>{t.pricing.importantNotes.note1}</span>
                             </div>
                             <div className="flex items-start gap-2">
                                 <span className="text-yellow-400">•</span>
-                                <span>点数仅限当前账号使用，不支持转移或退款</span>
+                                <span>{t.pricing.importantNotes.note2}</span>
                             </div>
                         </div>
                     </div>
@@ -346,7 +348,7 @@ export default function PricingPage() {
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                         </svg>
-                        返回首页
+                        {t.pricing.backToHome}
                     </Link>
                 </section>
             </div>

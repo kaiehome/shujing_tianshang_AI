@@ -15,8 +15,8 @@ export default function FeaturesPage() {
       color: "from-blue-500 to-cyan-500"
     },
     {
-      title: "18种专业模板风格",
-      description: "内置6类用户场景 × 每类3种风格模板，涵盖内容创作、情绪疗愈、品牌设计、教育插画等典型应用领域。",
+      title: "21+种专业模板风格",
+      description: "内置7类用户场景 × 每类3种风格模板，涵盖内容创作、情绪疗愈、品牌设计、教育插画等典型应用领域。",
       icon: "🎨",
       color: "from-purple-500 to-pink-500"
     },
@@ -55,13 +55,13 @@ export default function FeaturesPage() {
       description: "支持一次性点数包与会员订阅两种方式，适合不同使用频率的用户；新用户注册赠送免费点数体验。",
       icon: "💎",
       color: "from-cyan-500 to-blue-500"
-    },
-    {
-      title: "多种运营活动激励机制",
-      description: "支持注册礼包、每日打卡、节日活动、UGC投稿任务等玩法，激励用户持续创作并参与传播。",
-      icon: "📣",
-      color: "from-emerald-500 to-green-500"
     }
+    // {
+    //   title: "多种运营活动激励机制",
+    //   description: "支持注册礼包、每日打卡、节日活动、UGC投稿任务等玩法，激励用户持续创作并参与传播。",
+    //   icon: "📣",
+    //   color: "from-emerald-500 to-green-500"
+    // }
   ];
 
   return (
@@ -133,7 +133,7 @@ export default function FeaturesPage() {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
               <div className="bg-blue-900/20 border border-blue-500/30 rounded-xl p-4">
-                <div className="text-3xl font-bold text-blue-400 mb-2">18+</div>
+                <div className="text-3xl font-bold text-blue-400 mb-2">21+</div>
                 <div className="text-blue-300 text-sm">专业风格模板</div>
               </div>
               <div className="bg-green-900/20 border border-green-500/30 rounded-xl p-4">
@@ -141,7 +141,7 @@ export default function FeaturesPage() {
                 <div className="text-green-300 text-sm">免费体验点数</div>
               </div>
               <div className="bg-purple-900/20 border border-purple-500/30 rounded-xl p-4">
-                <div className="text-3xl font-bold text-purple-400 mb-2">6大</div>
+                <div className="text-3xl font-bold text-purple-400 mb-2">7大</div>
                 <div className="text-purple-300 text-sm">应用场景覆盖</div>
               </div>
             </div>
