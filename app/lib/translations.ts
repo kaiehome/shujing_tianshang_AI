@@ -10,7 +10,10 @@ export const translations = {
       register: '注册',
       myWorks: '我的作品',
       history: '我的作品',
-      points: '点数'
+      points: '点数',
+      image2image: '图生图',
+      imageExtend: '图像扩展',
+      tts: '语音合成'
     },
     footer: {
       quickLinks: '快速链接',
@@ -359,11 +362,112 @@ export const translations = {
       days: '天',
       hours: '小时',
       minutes: '分钟',
-      seconds: '秒'
+      seconds: '秒',
+      image2image: '图生图'
     },
     growth: {
       thankYou: "感谢你的每一次创作，愿AI为你的灵感添彩！",
       milestone: (count: number) => `你已生成${count}张作品，继续探索更多可能吧！`
+    },
+    features: {
+      title: '功能特点',
+      slogan: '专为创作者打造的全方位AI图像生成解决方案，让创意变现更简单',
+      countSuffix: '项核心功能特性',
+      feature1Title: '一键生成多风格图像',
+      feature1Desc: '只需输入一句中文描述，选择一个风格模板，即可一键生成高质量AI图像，适配社交媒体、电商、教学等多场景。',
+      feature2Title: '21+种专业模板风格',
+      feature2Desc: '内置7类用户场景 × 每类3种风格模板，涵盖内容创作、情绪疗愈、品牌设计、教育插画等典型应用领域。',
+      feature3Title: '中文智能优化 + 英文Prompt自动生成',
+      feature3Desc: '系统支持中文输入，自动联动大语言模型进行提示词优化、意图识别与英文Prompt生成，无需用户懂英文。',
+      feature4Title: '参数微调与高级Prompt自定义',
+      feature4Desc: '支持基础参数调节（图像尺寸、风格强度等），也提供高级模式自定义Prompt，适合专业用户自由创作。',
+      feature5Title: '图像实时预览与一键下载',
+      feature5Desc: '每次生成默认提供4张预览图，支持点击放大查看、收藏、打标签和下载保存至本地或"我的作品"中。',
+      feature6Title: '我的作品管理中心',
+      feature6Desc: '登录后可查看生成记录，分类管理、打标签收藏，支持再次编辑与生成，打造个人专属创作空间。',
+      feature7Title: '留言反馈机制',
+      feature7Desc: '内置"给我留言"按钮，方便用户反馈问题或建议，由开发者定期集中回复，提升用户参与感与产品打磨效率。',
+      feature8Title: '灵活的点数和会员制度',
+      feature8Desc: '支持一次性点数包与会员订阅两种方式，适合不同使用频率的用户；新用户注册赠送免费点数体验。',
+      whyTitle: '为什么选择 ARTBUD.SPACE',
+      whyDesc: '我们致力于为每一位创作者提供最简单易用、功能强大的AI图像生成工具，\n无论您是社交媒体运营者、设计师、教师还是电商从业者，都能在这里找到适合的创作方案',
+      why21: '专业风格模板',
+      why10: '免费体验点数',
+      why7: '应用场景覆盖',
+      ctaTitle: '开启您的AI创作之旅',
+      ctaDesc: '立即体验 ARTBUD.SPACE 的强大功能，用AI为您的创意插上翅膀',
+      ctaStart: '立即开始创作',
+      ctaPricing: '查看价格方案',
+      backHome: '返回首页'
+    },
+    faq: {
+      title: '常见问题',
+      slogan: '快速找到您关心的问题解答，让您更好地使用 ARTBUD.SPACE AI图像生成工具',
+      categories: [
+        {
+          title: '使用入门',
+          icon: '🚀',
+          color: 'from-blue-500 to-cyan-500',
+          questions: [
+            { q: '我该如何开始使用这款AI图像生成工具？', a: '只需打开网站，选择一个风格模板，输入中文描述，点击「立即生成」即可。新用户注册即可获得10点免费体验点数，无需安装App。' },
+            { q: '支持中文输入吗？我不会写英文Prompt怎么办？', a: '完全支持中文输入！系统内置智能翻译和优化功能，会自动将您的中文描述转换为专业的英文Prompt，并进行AI优化，无需掌握英文提示词写法。' },
+            { q: '为什么我点击生成后没反应或加载很久？', a: '可能原因：1）生成队列较多，请耐心等待；2）网络异常，建议刷新页面重试；3）点数不足，请检查账户余额。如持续无响应超过5分钟，请联系客服。' }
+          ]
+        },
+        {
+          title: '点数与付费',
+          icon: '💰',
+          color: 'from-green-500 to-emerald-500',
+          questions: [
+            { q: '每次点击生成需要消耗什么？是免费的吗？', a: '每次生成消耗1点数。新用户注册获得10点免费体验。之后可购买点数包：50点(¥15)、100点(¥27)、300点(¥75)，或订阅会员获得更多权益。' },
+            { q: '点数包和会员订阅有什么区别？', a: '点数包：按使用量付费，适合偶尔使用。会员订阅：享受无限生成+专属模板+优先处理+高清导出等特权，适合频繁使用的创作者。' },
+            { q: '是否支持退款或点数找回？', a: '虚拟点数一经使用不可退回。如遇系统异常导致多次失败扣点，可提供截图申请人工处理补点。' },
+            { q: '支付安全吗？支持哪些支付方式？', a: '支持支付宝、微信支付，均采用官方安全支付通道，资金安全有保障。支付成功后点数立即到账，支持开具电子发票。' }
+          ]
+        },
+        {
+          title: '功能使用',
+          icon: '🎨',
+          color: 'from-purple-500 to-pink-500',
+          questions: [
+            { q: '我可以自定义风格或Prompt吗？', a: '支持两种模式：1）简单模式：选择风格模板+中文描述；2）高级模式：完全自定义Prompt、调节参数（图像尺寸、风格强度等）。' },
+            { q: '为什么我看不到某些风格模板？', a: '部分高级模板仅对会员开放。免费用户可使用基础模板，会员可享受全部18+专业模板，包括商用级、艺术级等高端风格。' },
+            { q: '生成的图像带有水印吗？', a: '所有用户生成的图像均为无水印高清版本。支持直接下载保存，可用于个人创作、社交分享等用途。' },
+            { q: '如何提高生成效果？有什么技巧吗？', a: '1）描述要具体详细；2）选择合适的风格模板；3）开启AI优化功能；4）使用高级参数调节；5）多尝试不同的关键词组合。' }
+          ]
+        },
+        {
+          title: '作品管理',
+          icon: '📁',
+          color: 'from-orange-500 to-red-500',
+          questions: [
+            { q: '我生成的图像在哪里查看？可以保存吗？', a: '登录后，所有生成图像将自动保存在「我的作品」中。支持分类管理、添加标签、收藏、下载、分享，还可以基于历史作品重新生成。' },
+            { q: '可以批量下载我的作品吗？', a: '支持！在「我的作品」页面，可以勾选多张图片进行批量操作：批量下载、批量收藏、批量添加标签或批量删除。' },
+            { q: '作品会保存多久？会丢失吗？', a: '会员用户作品永久保存，免费用户保存90天。建议及时下载重要作品到本地。我们承诺不会删除付费用户的作品数据。' }
+          ]
+        },
+        {
+          title: '商用授权',
+          icon: '📄',
+          color: 'from-indigo-500 to-purple-500',
+          questions: [
+            { q: '生成的图像我可以商用吗？', a: '个人创作、社交分享完全免费。商业用途建议升级商用授权：会员用户享受基础商用权限，企业用户可申请扩展商用授权。' },
+            { q: '如何获得商用授权证明？', a: '会员用户可在「我的作品」中为特定图片申请商用授权证明。企业用户可联系客服获得批量授权协议和授权书。' },
+            { q: '商用时需要标注来源吗？', a: '个人使用无需标注。商业用途建议标注\'Generated by ARTBUD.SPACE\'，有助于获得更好的技术支持和优先服务。' }
+          ]
+        },
+        {
+          title: '技术支持',
+          icon: '🛠️',
+          color: 'from-teal-500 to-cyan-500',
+          questions: [
+            { q: '支持什么图像尺寸和格式？', a: '支持多种尺寸：方形(512×512)、横向(768×512)、竖向(512×768)。输出格式为高清PNG，支持下载为JPG。会员可享受更大尺寸选项。' },
+            { q: '生成失败了怎么办？点数会被扣除吗？', a: '生成失败不会扣除点数。常见失败原因：描述包含违规内容、网络超时、服务器繁忙。系统会自动重试，失败后可免费重新生成。' },
+            { q: '可以在手机上使用吗？', a: '完全支持！网站采用响应式设计，在手机、平板、电脑上均可正常使用。建议使用Chrome、Safari等现代浏览器获得最佳体验。' },
+            { q: '如何联系客服或反馈问题？', a: '1）页面内「给我留言」按钮；\n2）发送邮件至support@artbud.space；' }
+          ]
+        }
+      ]
     }
   },
   en: {
@@ -375,7 +479,10 @@ export const translations = {
       register: 'Sign Up',
       myWorks: 'My Works',
       history: 'History',
-      points: 'Points'
+      points: 'Points',
+      image2image: 'Image2Image',
+      imageExtend: 'Image Extend',
+      tts: 'Text-to-Speech'
     },
     footer: {
       quickLinks: 'Quick Links',
@@ -422,7 +529,7 @@ export const translations = {
       guestMode: 'Guest Mode',
       newUserBenefits: 'Exclusive Benefits for New Users',
       registerReward: {
-        title: 'Sign up bonus',
+        title: '注册奖励',
         points: '10 Points',
         description: 'Free points for new users'
       },
@@ -684,7 +791,7 @@ export const translations = {
       loginToDownload: 'Please login to download images',
       loginToFavorite: 'Please login to favorite images',
       loginToUseFeature: 'Please login to use this feature',
-      registerBonus: 'Register to get 10 free generation points',
+      registerBonus: 'Register to get 10 points',
       registerToUnlock: 'Register to unlock full features',
       registerForHighRes: 'Register to download high-resolution images',
       registerToSave: 'Register to save works',
@@ -724,11 +831,112 @@ export const translations = {
       days: 'Days',
       hours: 'Hours',
       minutes: 'Minutes',
-      seconds: 'Seconds'
+      seconds: 'Seconds',
+      image2image: 'Image2Image'
     },
     growth: {
       thankYou: "Thank you for every creation. May AI add color to your inspiration!",
       milestone: (count: number) => `You have created ${count} works. Keep exploring more possibilities!`
+    },
+    features: {
+      title: 'Features',
+      slogan: 'A comprehensive AI image generation solution for creators, making creativity easier to realize',
+      countSuffix: 'Core Features',
+      feature1Title: 'One-click Multi-style Image Generation',
+      feature1Desc: 'Just enter a Chinese description, select a style template, and you can generate high-quality AI images with one click, suitable for social media, e-commerce, education, and more.',
+      feature2Title: '21+ Professional Style Templates',
+      feature2Desc: 'Built-in 7 user scenarios × 3 style templates each, covering content creation, emotional healing, brand design, educational illustration, and more.',
+      feature3Title: 'Chinese Optimization + English Prompt Generation',
+      feature3Desc: 'The system supports Chinese input, automatically links with LLMs for prompt optimization, intent recognition, and English prompt generation. No need to know English.',
+      feature4Title: 'Parameter Tuning & Advanced Prompt Customization',
+      feature4Desc: 'Supports basic parameter adjustment (image size, style strength, etc.), and advanced mode for custom prompts, suitable for professional users.',
+      feature5Title: 'Real-time Preview & One-click Download',
+      feature5Desc: 'Each generation provides 4 preview images by default, supports zoom, favorite, tagging, and download to local or "My Works".',
+      feature6Title: 'My Works Management Center',
+      feature6Desc: 'View generation records after login, manage by category, tag, favorite, re-edit and generate, build your own creative space.',
+      feature7Title: 'Feedback Mechanism',
+      feature7Desc: 'Built-in "Contact Us" button for user feedback, regularly replied by developers to improve user engagement and product quality.',
+      feature8Title: 'Flexible Points & Membership System',
+      feature8Desc: 'Supports one-time points packs and membership subscriptions, suitable for different usage frequencies. New users get free points.',
+      whyTitle: 'Why Choose ARTBUD.SPACE',
+      whyDesc: 'We are committed to providing every creator with the simplest and most powerful AI image generation tool.\nWhether you are a social media operator, designer, teacher, or e-commerce practitioner, you can find a suitable solution here.',
+      why21: 'Professional Style Templates',
+      why10: 'Free Experience Points',
+      why7: 'Application Scenarios',
+      ctaTitle: 'Start Your AI Creation Journey',
+      ctaDesc: 'Experience the power of ARTBUD.SPACE now and let AI give wings to your creativity',
+      ctaStart: 'Start Creating',
+      ctaPricing: 'View Pricing',
+      backHome: 'Back to Home'
+    },
+    faq: {
+      title: 'FAQs',
+      slogan: 'Quickly find answers to your questions and use ARTBUD.SPACE AI image generation tools better',
+      categories: [
+        {
+          title: 'Getting Started',
+          icon: '🚀',
+          color: 'from-blue-500 to-cyan-500',
+          questions: [
+            { q: 'How do I start using this AI image generation tool?', a: 'Just open the website, select a style template, enter a Chinese description, and click "Generate Now". New users get 10 free experience points, no app installation required.' },
+            { q: 'Does it support Chinese input? What if I can\'t write English prompts?', a: 'Fully supports Chinese input! The system has built-in intelligent translation and optimization, which will automatically convert your Chinese description into a professional English prompt and optimize it with AI. No need to master English prompt writing.' },
+            { q: 'Why is there no response or a long wait after I click generate?', a: 'Possible reasons: 1) The generation queue is long, please be patient; 2) Network issues, try refreshing the page; 3) Insufficient points, please check your account balance. If there is still no response after more than 5 minutes, please contact customer service.' }
+          ]
+        },
+        {
+          title: 'Points & Payment',
+          icon: '💰',
+          color: 'from-green-500 to-emerald-500',
+          questions: [
+            { q: 'What does each generation cost? Is it free?', a: 'Each generation costs 1 point. New users get 10 free experience points. Afterwards, you can buy point packs: 50 points (¥15), 100 points (¥27), 300 points (¥75), or subscribe for more benefits.' },
+            { q: 'What\'s the difference between point packs and membership?', a: 'Point packs: pay per use, suitable for occasional users. Membership: unlimited generation, exclusive templates, priority processing, HD export, etc., suitable for frequent creators.' },
+            { q: 'Can I get a refund or recover points?', a: 'Virtual points are non-refundable once used. If multiple points are deducted due to system errors, you can provide screenshots to apply for manual compensation.' },
+            { q: 'Is payment secure? What payment methods are supported?', a: 'Supports Alipay and WeChat Pay, both use official secure payment channels, and funds are safe. Points are credited immediately after payment, and electronic invoices are supported.' }
+          ]
+        },
+        {
+          title: 'Feature Usage',
+          icon: '🎨',
+          color: 'from-purple-500 to-pink-500',
+          questions: [
+            { q: 'Can I customize styles or prompts?', a: 'Supports two modes: 1) Simple mode: select a style template + Chinese description; 2) Advanced mode: fully customize prompts and adjust parameters (image size, style strength, etc.).' },
+            { q: 'Why can\'t I see some style templates?', a: 'Some advanced templates are only available to members. Free users can use basic templates, members can enjoy all 21+ professional templates, including commercial and artistic high-end styles.' },
+            { q: 'Are generated images watermarked?', a: 'All user-generated images are HD and watermark-free. You can download and use them for personal creation and social sharing.' },
+            { q: 'How to improve generation results? Any tips?', a: '1) Be specific and detailed in your description; 2) Choose the right style template; 3) Enable AI optimization; 4) Use advanced parameter tuning; 5) Try different keyword combinations.' }
+          ]
+        },
+        {
+          title: 'Works Management',
+          icon: '📁',
+          color: 'from-orange-500 to-red-500',
+          questions: [
+            { q: 'Where can I view my generated images? Can I save them?', a: 'After login, all generated images are automatically saved in "My Works". Supports category management, tagging, favoriting, downloading, sharing, and re-generation based on history.' },
+            { q: 'Can I batch download my works?', a: 'Yes! On the "My Works" page, you can select multiple images for batch operations: batch download, batch favorite, batch tag, or batch delete.' },
+            { q: 'How long are works saved? Will they be lost?', a: 'Works are saved permanently for members, and 90 days for free users. It is recommended to download important works in time. We promise not to delete paid users\' work data.' }
+          ]
+        },
+        {
+          title: 'Commercial License',
+          icon: '📄',
+          color: 'from-indigo-500 to-purple-500',
+          questions: [
+            { q: 'Can I use generated images commercially?', a: 'Personal creation and social sharing are completely free. For commercial use, it is recommended to upgrade to a commercial license: members enjoy basic commercial rights, and enterprise users can apply for extended commercial licenses.' },
+            { q: 'How to get a commercial license certificate?', a: 'Members can apply for a commercial license certificate for specific images in "My Works". Enterprise users can contact customer service for batch license agreements and certificates.' },
+            { q: 'Do I need to credit the source for commercial use?', a: 'No credit is required for personal use. For commercial use, it is recommended to credit "Generated by ARTBUD.SPACE" to get better technical support and priority service.' }
+          ]
+        },
+        {
+          title: 'Technical Support',
+          icon: '🛠️',
+          color: 'from-teal-500 to-cyan-500',
+          questions: [
+            { q: 'What image sizes and formats are supported?', a: 'Supports multiple sizes: square (512×512), landscape (768×512), portrait (512×768). Output is HD PNG, supports download as JPG. Members can enjoy larger size options.' },
+            { q: 'What if generation fails? Will points be deducted?', a: 'No points will be deducted for failed generations. Common reasons: description contains prohibited content, network timeout, server busy. The system will automatically retry, and you can regenerate for free after failure.' },
+            { q: 'Can I use it on my phone?', a: 'Fully supported! The website is responsive and works on mobile, tablet, and desktop. It is recommended to use modern browsers like Chrome and Safari for the best experience.' },
+            { q: 'How to contact customer service or give feedback?', a: '1) "Contact Us" button on the page;\n2) Email support@artbud.space;' }
+          ]
+        }
+      ]
     }
   }
 };

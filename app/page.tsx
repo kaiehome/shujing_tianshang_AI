@@ -190,8 +190,10 @@ export default function Home() {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
 
-  // 选中分类对象
-  const selectedCategoryObj = stylePresets.find(p => (currentLocale === 'zh' ? p.category_zh : p.category_en) === selectedCategory)
+  // isClient 标志
+  const [isClient, setIsClient] = useState(false)
+  useEffect(() => { setIsClient(true) }, [])
+  const selectedCategoryObj = isClient ? stylePresets.find(p => (currentLocale === 'zh' ? p.category_zh : p.category_en) === selectedCategory) : null
 
   // 首次加载时检查是否需要引导
   useEffect(() => {
@@ -352,7 +354,7 @@ export default function Home() {
         ...otherParams,
         style: styleId
       }
-      formData.append('model', modelId)
+      formData.append('model', String(modelId))
       formData.append('parameters', JSON.stringify(paramsToPass))
 
       // 添加所有上传的图片
@@ -379,7 +381,7 @@ export default function Home() {
       
       while (retries < maxRetries) {
         const statusFormData = new FormData()
-        statusFormData.append('taskId', taskId)
+        statusFormData.append('taskId', String(taskId))
         
         const statusResponse = await fetch('/api/generate', {
           method: 'POST',
@@ -418,7 +420,7 @@ export default function Home() {
             batchId: `batch-${Date.now()}`
           }));
           
-          setGeneratedImages(imageData);
+          setGeneratedImages(prev => [...prev, ...imageData]);
           
           // 使用 incrementGeneration 减少剩余次数
           incrementGeneration(finalPrompt);
@@ -457,9 +459,10 @@ export default function Home() {
           setTimeout(() => {
             const resultsSection = document.getElementById('results-section');
             if (resultsSection) {
-              resultsSection.scrollIntoView({ behavior: 'smooth' });
+              const y = resultsSection.getBoundingClientRect().top + window.scrollY - 80; // 80px 顶部间距
+              window.scrollTo({ top: y, behavior: 'smooth' });
             }
-          }, 1000);
+          }, 400);
           
           return;
         } else if (status === 'FAILED') {
@@ -608,26 +611,6 @@ export default function Home() {
     }
   }, [generatedImages.length])
 
-  // 生成成功时累计生成数
-  useEffect(() => {
-    if (typeof window !== 'undefined' && generatedImages.length > 0) {
-      const count = Number(localStorage.getItem('totalGenerated') || '0')
-      localStorage.setItem('totalGenerated', String(count + 1))
-    }
-  }, [generatedImages.length])
-
-  // 首次生成成功气泡提示
-  const [showFirstGenTip, setShowFirstGenTip] = useState(false)
-  useEffect(() => {
-    if (typeof window !== 'undefined' && generatedImages.length > 0) {
-      const firstGenShown = localStorage.getItem('firstGenTipShown')
-      if (!firstGenShown) {
-        setShowFirstGenTip(true)
-        localStorage.setItem('firstGenTipShown', '1')
-      }
-    }
-  }, [generatedImages.length])
-
   // 节日Banner（可根据实际节日动态控制）
   const isFestival = false // 可根据实际节日动态设置
 
@@ -646,23 +629,22 @@ export default function Home() {
   // 首页激励横幅（所有用户可见）
   const showMilestoneBanner = totalGenerated >= 1
 
-  const [isClient, setIsClient] = useState(false)
-  useEffect(() => { setIsClient(true) }, [])
+  // 首次生成成功气泡提示
+  const [showFirstGenTip, setShowFirstGenTip] = useState(false)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && generatedImages.length === 1) {
+      const firstGenShown = localStorage.getItem('firstGenTipShown')
+      if (!firstGenShown) {
+        setShowFirstGenTip(true)
+        localStorage.setItem('firstGenTipShown', '1')
+      }
+    }
+  }, [generatedImages.length])
 
   return (
     <div className="relative">
-      {/* 首页激励横幅（所有用户可见） */}
-      {showMilestoneBanner && (
-        <div className="w-full flex justify-center z-40">
-          <div className="bg-gradient-to-r from-emerald-400/80 via-blue-400/80 to-purple-400/80 text-white px-6 py-3 rounded-full shadow-lg font-semibold flex items-center gap-3 animate-fade-in-down mt-4 mb-2">
-            <span className="text-2xl">✨</span>
-            <span>{t.growth.thankYou}</span>
-            {totalGenerated >= 10 && (
-              <span className="ml-4 text-yellow-200 font-bold animate-pulse">{t.growth.milestone(totalGenerated)}</span>
-            )}
-          </div>
-        </div>
-      )}
+      {/* 全局 isClient 包裹，彻底消除 hydration mismatch */}
+      {isClient && <>
       {/* 新用户欢迎Banner */}
       {showWelcomeBanner && (
         <div className="w-full bg-gradient-to-r from-green-400/20 to-blue-400/20 text-green-700 text-center py-3 font-semibold text-lg mb-4">
@@ -688,16 +670,16 @@ export default function Home() {
         </div>
       )}
       {/* 首次生成成功气泡提示 */}
-      {showFirstGenTip && (
+      {showFirstGenTip ? (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
           <div className="bg-green-500 text-white px-6 py-3 rounded-full shadow-lg font-semibold flex items-center gap-2 animate-bounce">
             <span>👏</span> {t.home.firstGeneration}
             <button onClick={() => setShowFirstGenTip(false)} className="ml-4 text-white/80 hover:text-white">✕</button>
           </div>
         </div>
-      )}
+      ) : null}
       {/* 欢迎区+成长轨迹卡片区 */}
-      {showWelcome && isClient && (
+      {showWelcome && (
         <div className="max-w-4xl mx-auto flex flex-col items-center pt-8 pb-4 px-4">
           <div className="flex flex-col items-center gap-2 mb-4">
             <img src={avatarUrl} alt="avatar" className="w-16 h-16 rounded-full object-cover border-2 border-blue-400 shadow" />
@@ -723,6 +705,10 @@ export default function Home() {
           </div>
         </div>
       )}
+      {/* 生成结果区域 */}
+      {/* <ImageResultGallery images={generatedImages} isGuest={isGuestMode} onDownloadAttempt={handleDownloadAttempt} onSaveAttempt={handleSaveAttempt} onEditAttempt={handleEditAttempt} /> */}
+      {/* 顶部的生成结果区已删除，只保留下方 results-section 的那一块 */}
+      </>}
       <div className="min-h-screen bg-gradient-to-b from-zinc-900 to-zinc-800 text-white">
         <div className="max-w-6xl mx-auto w-full pt-0 pb-8 px-4">
           {/* Hero Section - 主标题区 */}
@@ -778,14 +764,15 @@ export default function Home() {
                       </div>
                     </div>
                   )}
-                  <StyleCategoryTabs
-                    categories={stylePresets}
-                    selectedCategory={selectedCategory}
-                    onSelectCategory={handleCategorySelect}
-                  />
-                  {(() => {
-                    if (!selectedCategoryObj) return null;
-
+                  {/* 仅客户端渲染 StyleCategoryTabs，避免 SSR/CSR 不一致 */}
+                  {isClient && (
+                    <StyleCategoryTabs
+                      categories={stylePresets}
+                      selectedCategory={selectedCategory}
+                      onSelectCategory={handleCategorySelect}
+                    />
+                  )}
+                  {isClient && selectedCategoryObj && (() => {
                     return (
                       <div className="mt-6 p-4 bg-zinc-800/60 border border-zinc-700/80 rounded-2xl animate-fade-in-down shadow-lg">
                         <div className="flex items-start gap-4">

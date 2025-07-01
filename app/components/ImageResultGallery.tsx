@@ -37,6 +37,8 @@ export default function ImageResultGallery({
   
   // 生成中的占位符
   const placeholderItems = isGenerating ? [1, 2, 3, 4] : []
+  // 可选：可传入参考图像或默认图片
+  const placeholderImage = '/presets/placeholder.jpg'
 
   // 处理图像数据，确保都是ImageData格式，并按时间排序（最新的在前）
   const processedImages = useMemo(() => {
@@ -113,7 +115,7 @@ export default function ImageResultGallery({
             <span className="text-2xl">👋</span>
             <div className="flex-1">
               <p className="text-orange-400 font-semibold mb-1">想保存你的灵感？</p>
-              <p className="text-gray-300 text-sm">注册免费获取30点数，解锁高清下载和作品管理功能！</p>
+              <p className="text-gray-300 text-sm">注册免费获取10点数，解锁高清下载和作品管理功能！</p>
             </div>
             <button 
               onClick={() => window.location.href = getLocalizedPath('/login', currentLocale)}
@@ -127,12 +129,20 @@ export default function ImageResultGallery({
       
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {/* 生成中的占位符 - 显示在最前面 */}
-        {isGenerating && processedImages.length > 0 && placeholderItems.map(i => (
-          <div key={`placeholder-${i}`} className="bg-zinc-700/30 rounded-xl border border-zinc-600/20 animate-pulse">
-            <div className="h-48 bg-zinc-600/50 rounded-t-xl flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-8 h-8 border-2 border-blue-400 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                <span className="text-gray-400 text-sm">生成中...</span>
+        {isGenerating && processedImages.length > 0 && placeholderItems.map((i, idx) => (
+          <div key={`placeholder-${i}`} className="bg-zinc-700/50 rounded-xl overflow-hidden border border-zinc-600/30 relative flex flex-col">
+            {/* 模糊占位图片 */}
+            <div className="relative w-full h-48 flex items-center justify-center bg-zinc-700">
+              <img
+                src={placeholderImage}
+                alt="生成中"
+                className="w-full h-full object-cover blur-sm opacity-70"
+                draggable={false}
+              />
+              {/* 进度环和文案覆盖 */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <div className="w-12 h-12 border-4 border-white/60 border-t-blue-400 rounded-full animate-spin mb-4"></div>
+                <span className="text-white text-lg font-semibold drop-shadow">AI生成中...{43 + idx * 7}%</span>
               </div>
             </div>
             <div className="p-4">
@@ -238,15 +248,7 @@ export default function ImageResultGallery({
         ))}
       </div>
       
-      {processedImages.length === 0 && !isGenerating && (
-        <div className="text-center py-12">
-          <svg className="w-16 h-16 text-gray-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          <p className="text-gray-400 text-lg">还没有生成图片</p>
-          <p className="text-gray-500 text-sm mt-2">选择风格并描述您想要的图像，点击"立即生成"开始创作</p>
-        </div>
-      )}
+      {/* 无图片时不显示任何内容，保持留白 */}
 
       {/* 大图预览模态框 */}
       {enlargedImage && (

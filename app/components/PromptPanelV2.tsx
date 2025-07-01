@@ -2,8 +2,7 @@
 import { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { useTranslations } from '../hooks/useTranslations'
-
-
+import React from 'react'
 
 interface GenerationParams {
   aspectRatio: string;
@@ -12,6 +11,36 @@ interface GenerationParams {
   resolution: string;
   lighting: string;
   mood: string;
+}
+
+// 独立导出图片上传面板组件
+export function ImageUploadPanel({ imagePreviews, onUpload, onRemove }: {
+  imagePreviews: string[];
+  onUpload: (file: File) => void;
+  onRemove: (index: number) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-2 mb-2">
+      <div className="flex gap-2 flex-wrap">
+        {imagePreviews.map((url, idx) => (
+          <div key={idx} className="relative group">
+            <img src={url} alt="preview" className="w-16 h-16 object-cover rounded shadow border border-zinc-600" />
+            <button
+              className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-80 group-hover:opacity-100"
+              onClick={() => onRemove(idx)}
+              title="移除图片"
+            >×</button>
+          </div>
+        ))}
+      </div>
+      <label className="inline-block cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm font-medium shadow">
+        上传图片
+        <input type="file" accept="image/*" className="hidden" onChange={e => {
+          if (e.target.files && e.target.files[0]) onUpload(e.target.files[0]);
+        }} />
+      </label>
+    </div>
+  );
 }
 
 export default function PromptPanelV2({ 
@@ -178,7 +207,6 @@ export default function PromptPanelV2({
   // 按照要求的顺序：画面比例、光照效果、色彩氛围、风格强度
   const displayParams = ['aspectRatio', 'lighting', 'mood', 'styleStrength']
 
-
   return (
     <div className="w-full max-w-full">
       {/* 提示词输入区 - 包含输入框和参数设置 */}
@@ -187,67 +215,6 @@ export default function PromptPanelV2({
         
         {/* 容器设为 relative 和 flex */}
         <div className="mb-4">
-          {/* 图片上传/预览区域 - 上方纵向排列 */}
-          {imagePreviews.length > 0 && (
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
-              {imagePreviews.map((previewUrl, index) => (
-                <div key={index} className="relative group w-14 h-14">
-                  <img
-                    src={previewUrl}
-                    alt={`Preview ${index + 1}`}
-                    className="w-full h-full object-cover rounded-lg border-2 border-green-500"
-                  />
-                  <button
-                    onClick={() => onRemoveImage(index)}
-                    className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 transform hover:scale-110"
-                    title={t.generation.removeImage}
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
-                  </button>
-                </div>
-              ))}
-              {/* 上传按钮 (当图片少于3张时显示) */}
-              {imagePreviews.length < 3 && (
-                <div className="group relative">
-                  <label>
-                    <input type="file" accept="image/*" onChange={handleImageUploadInternal} className="hidden"/>
-                    <div 
-                      className="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all duration-100 transform hover:scale-105 active:scale-95 hover:shadow-lg hover:shadow-orange-500/30"
-                    >
-                      <svg className="w-6 h-6 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                      <span className="text-xs text-white/70 mt-1">{t.generation.addImage}</span>
-                    </div>
-                  </label>
-                  {/* Custom Tooltip */}
-                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-100 delay-300 whitespace-nowrap z-10 pointer-events-none">
-                    {t.generation.uploadReference}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-900"></div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-          {/* 没有图片时也要显示上传按钮 */}
-          {imagePreviews.length === 0 && (
-            <div className="mb-2">
-              <div className="group relative inline-block">
-                <label>
-                  <input type="file" accept="image/*" onChange={handleImageUploadInternal} className="hidden"/>
-                  <div 
-                    className="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex flex-col items-center justify-center cursor-pointer transition-all duration-100 transform hover:scale-105 active:scale-95 hover:shadow-lg hover:shadow-orange-500/30"
-                  >
-                    <svg className="w-6 h-6 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                    <span className="text-xs text-white/70 mt-1">{t.generation.addImage}</span>
-                  </div>
-                </label>
-                {/* Custom Tooltip */}
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-100 delay-300 whitespace-nowrap z-10 pointer-events-none">
-                  {t.generation.uploadReference}
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-gray-900"></div>
-                </div>
-              </div>
-            </div>
-          )}
           <div className="relative">
             <textarea
               className="w-full h-40 bg-zinc-700/80 border border-zinc-600/50 text-white rounded-lg px-4 py-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-500/50 transition-all duration-200 hover:border-zinc-500/70 leading-relaxed"

@@ -2,10 +2,11 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Logo from './Logo'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { getCurrentLocale, getLocalizedPath, isCurrentPath } from '../lib/i18n'
 import LanguageDropdown from './LanguageDropdown'
 import { useTranslations } from '../hooks/useTranslations'
+import { ImageUploadPanel } from './PromptPanelV2'
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -14,7 +15,43 @@ export default function Navbar() {
   const [userPoints, setUserPoints] = useState(128) // 临时状态
   const [isVip, setIsVip] = useState(false) // 临时状态
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [showImagePanel, setShowImagePanel] = useState(false)
+  const [imagePreviews, setImagePreviews] = useState<string[]>([])
+  const [image2ImagePrompt, setImage2ImagePrompt] = useState('')
+  const resultsSectionRef = useRef<HTMLDivElement | null>(null)
   
+  // 处理图片上传
+  const handleUpload = (file: File) => {
+    const reader = new FileReader()
+    reader.onload = e => {
+      setImagePreviews(prev => [...prev, e.target?.result as string])
+    }
+    reader.readAsDataURL(file)
+  }
+  // 处理图片移除
+  const handleRemove = (idx: number) => {
+    setImagePreviews(prev => prev.filter((_, i) => i !== idx))
+  }
+
+  // 生成回调（需主页面配合实现）
+  const handleImage2ImageGenerate = () => {
+    if (imagePreviews.length === 0) return;
+    // 这里假设有全局/props回调或事件总线，实际项目可用 context/recoil/zustand/eventBus 等
+    // window.dispatchEvent(new CustomEvent('image2image-generate', { detail: { image: imagePreviews[0], prompt: image2ImagePrompt } }))
+    // 关闭弹窗
+    setShowImagePanel(false)
+    // 滚动到结果区（假设主页面有 id="results-section"）
+    setTimeout(() => {
+      const section = document.getElementById('results-section')
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }, 300)
+    // 清空输入
+    setImage2ImagePrompt('')
+    setImagePreviews([])
+  }
+
   return (
     <nav className="w-full flex items-center justify-between px-4 md:px-8 py-4 bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-900/90 backdrop-blur-md border-b border-zinc-800 shadow-xl sticky top-0 z-50">
       {/* 左侧品牌区 */}
@@ -83,6 +120,56 @@ export default function Navbar() {
             <span className="font-medium">{t.nav.faq}</span>
             {isCurrentPath(pathname, '/faq') && (
               <div className="absolute inset-0 bg-gradient-to-r from-green-400/10 to-teal-400/10 rounded-xl animate-pulse"></div>
+            )}
+          </Link>
+
+          {/* 图生图按钮 */}
+          <button
+            className={`group relative flex items-center gap-2 text-sm font-semibold rounded-xl px-4 py-2.5 transition-all duration-300 transform hover:scale-105 font-bold border-2 border-pink-400/30
+              ${isCurrentPath(pathname, '/image2image')
+                ? 'bg-gradient-to-r from-pink-500/20 to-purple-500/20 text-pink-400 border-pink-400 shadow-lg shadow-pink-500/20'
+                : 'text-white hover:text-pink-400 hover:bg-gradient-to-r hover:from-pink-500/10 hover:to-purple-500/10 hover:border-pink-400/60'}
+            `}
+            onClick={() => window.location.href = getLocalizedPath('/image2image', currentLocale)}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+            <span>{t.nav.image2image}</span>
+          </button>
+
+          {/* 图像扩展按钮 */}
+          <Link 
+            href={getLocalizedPath('/image-extend', currentLocale)} 
+            className={`group relative flex items-center gap-2 text-sm font-semibold rounded-xl px-4 py-2.5 transition-all duration-300 transform hover:scale-105 border-2 ${
+              isCurrentPath(pathname, '/image-extend') 
+                ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-400 border-cyan-400 shadow-lg shadow-cyan-500/20' 
+                : 'text-gray-200 hover:text-cyan-400 hover:bg-gradient-to-r hover:from-cyan-500/10 hover:to-blue-500/10 border-pink-400/30'
+            }`}
+          >
+            <svg className={`w-4 h-4 transition-all duration-300 ${pathname === '/image-extend' ? 'text-cyan-400' : 'text-gray-400 group-hover:text-cyan-400'} group-hover:scale-110`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <rect x="4" y="4" width="16" height="16" rx="4" strokeWidth="2" />
+              <path d="M8 12h8M12 8v8" strokeWidth="2" />
+            </svg>
+            <span className="font-medium">{t.nav.imageExtend}</span>
+            {isCurrentPath(pathname, '/image-extend') && (
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 to-blue-400/10 rounded-xl animate-pulse"></div>
+            )}
+          </Link>
+          {/* 语音合成按钮 */}
+          <Link 
+            href={getLocalizedPath('/tts', currentLocale)} 
+            className={`group relative flex items-center gap-2 text-sm font-semibold rounded-xl px-4 py-2.5 transition-all duration-300 transform hover:scale-105 border-2 ${
+              isCurrentPath(pathname, '/tts') 
+                ? 'bg-gradient-to-r from-indigo-500/20 to-blue-500/20 text-indigo-400 border-indigo-400 shadow-lg shadow-indigo-500/20' 
+                : 'text-gray-200 hover:text-indigo-400 hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-blue-500/10 border-pink-400/30'
+            }`}
+          >
+            <svg className={`w-4 h-4 transition-all duration-300 ${pathname === '/tts' ? 'text-indigo-400' : 'text-gray-400 group-hover:text-indigo-400'} group-hover:scale-110`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M12 4v16m8-8H4" strokeWidth="2" />
+              <path d="M16 8a4 4 0 010 8" strokeWidth="2" />
+            </svg>
+            <span className="font-medium">{t.nav.tts}</span>
+            {isCurrentPath(pathname, '/tts') && (
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-400/10 to-blue-400/10 rounded-xl animate-pulse"></div>
             )}
           </Link>
         </div>
@@ -268,6 +355,59 @@ export default function Navbar() {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* 弹出图片上传面板 */}
+      {showImagePanel && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="relative bg-zinc-900 border-2 border-pink-400/40 rounded-2xl shadow-2xl p-8 w-full max-w-md mx-auto animate-fade-in-down">
+            <button onClick={() => setShowImagePanel(false)} className="absolute top-4 right-4 text-2xl text-zinc-400 hover:text-pink-400 bg-black/30 rounded-full w-10 h-10 flex items-center justify-center transition-all z-10">×</button>
+            <div className="flex items-center gap-2 mb-6">
+              <span className="text-pink-400 text-2xl">🖼️</span>
+              <h2 className="text-xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">图生图</h2>
+            </div>
+            <div className="flex flex-col items-center w-full">
+              {imagePreviews.length === 0 ? (
+                <label className="w-full flex flex-col items-center justify-center border-2 border-dashed border-pink-400/40 rounded-xl p-8 cursor-pointer hover:bg-pink-400/5 transition text-center"
+                  onDragOver={e => { e.preventDefault(); e.stopPropagation(); }}
+                  onDrop={e => {
+                    e.preventDefault();
+                    if (e.dataTransfer.files && e.dataTransfer.files[0]) handleUpload(e.dataTransfer.files[0]);
+                  }}
+                >
+                  <span className="text-5xl mb-2 text-pink-300">＋</span>
+                  <span className="text-pink-300 mb-2 text-lg font-semibold">点击上传图片</span>
+                  <span className="text-gray-400 text-sm mb-2">或拖拽图片到此处</span>
+                  <span className="text-gray-500 text-xs">支持JPG/PNG，最大5MB</span>
+                  <input type="file" accept="image/*" className="hidden" onChange={e => {
+                    if (e.target.files && e.target.files[0]) handleUpload(e.target.files[0]);
+                  }} />
+                </label>
+              ) : (
+                <div className="relative w-full flex flex-col items-center">
+                  <img src={imagePreviews[0]} className="w-60 h-60 object-cover rounded-xl mb-2 border-2 border-pink-400/30 shadow-lg" />
+                  <button className="absolute top-2 right-2 bg-black/60 text-white rounded-full p-2 hover:bg-black/80 transition" onClick={() => handleRemove(0)}>✕</button>
+                </div>
+              )}
+              {/* 提示词输入框，可选 */}
+              <input
+                type="text"
+                className="mt-6 w-full px-4 py-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white text-base focus:outline-none focus:ring-2 focus:ring-pink-400/40"
+                placeholder="可选：为生成图片添加描述/提示词（可留空）"
+                value={image2ImagePrompt}
+                onChange={e => setImage2ImagePrompt(e.target.value)}
+                maxLength={200}
+              />
+              <button
+                className="mt-8 w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold text-lg disabled:bg-gray-600 disabled:cursor-not-allowed transition-all"
+                disabled={imagePreviews.length === 0}
+                onClick={handleImage2ImageGenerate}
+              >
+                立即生成
+              </button>
+            </div>
           </div>
         </div>
       )}
